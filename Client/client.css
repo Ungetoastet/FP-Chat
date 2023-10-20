@@ -1,0 +1,90 @@
+:root {
+    /* Paletten generator: https://coolors.co/ff6781-121417-ccf5ac-717568-297373 */
+
+    --background: #121417;
+    --main: #FF6781;
+    --accent: #CCF5AC;
+    --soft: #717568;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--accent);
+    margin: 30px;
+    font-family: sans-serif;
+}
+
+h1 {
+    color: var(--main);
+}
+
+div#window-chat {
+    border: 1px solid var(--main);
+    border-radius: 10px;
+    width: 70%;
+    height: 50vh;
+    margin: 40px 10px 10px 10px;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+div#window-type {
+    display: flex; 
+    margin: 0px 10px; 
+    width: 70%;
+    padding: 10px;
+    align-items: right;
+}
+
+input[type=text]#composer {
+    background-color: var(--background);
+    width: 100%;
+    margin-right: 10px;
+    border: 1px solid var(--main);
+    border-radius: 15px;
+    color: var(--accent);
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+div.message {
+    margin: 30px 10px;
+    border-radius: 15px;
+    color: var(--background);
+    font-weight: bolder;
+    padding: 10px 20px;
+    width: fit-content;
+}
+
+div.message#sent {
+    margin-left: auto;
+    margin-right: 10px;
+    background-color: var(--accent);
+}
+
+div.message#recieved {
+    background-color: var(--main);
+}
+
+div.message#server {
+    background-color: var(--soft);
+    margin-left: auto;
+    margin-right: 45%;
+}
+
+button#main {
+    border-radius: 15px;
+    border-width: 0px;
+    color: var(--background);
+    background-color: var(--accent);
+    font-weight: bolder;
+    padding: 10px 20px;
+}
+
+button#main:hover {
+    box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0,0,0,0);
+}
+
+button#main:active {
+    box-shadow: inset 0px 0px 3px 3px rgba(0,0,0,0.3);
+}

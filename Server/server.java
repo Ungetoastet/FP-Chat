@@ -45,9 +45,14 @@ class ServerThread extends Thread {
             System.out.println("Client connected!");
             
             InputStream in = client.getInputStream();
+            OutputStream out = client.getOutputStream();
             
             // read a newline or carriage return delimited string
             DataInputStream din = new DataInputStream(in);
+            DataOutputStream dout = new DataOutputStream(out);
+
+            msgHandler.push_message(this, "New client joined.");
+            dout.writeUTF("You are now connected to the server.");
             
             while (client.isConnected()) {
                 String usrmsg = din.readUTF();
