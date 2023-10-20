@@ -1,16 +1,15 @@
 # FP-Chat
 Fortgeschrittenes Programmierpraktikum WS23/24: Chatprogramm
 
-## Über das Projekt
 2 Idioten vollgepumpt mit Koffein, die in einer Nacht nen Chatroom programmieren.
 Einer kann was, die andere malt.
 
-## Features
+# Features
 - Noch keine lol
 
-## ToDo
-### Meilenstein 1
-#### Server
+# ToDo
+## Meilenstein 1
+### Server
 - starten und beenden des ServerSockets
 - Realisierung eines Netzwerk-Listener, der es neuen Clients
 ermöglicht, sich anzumelden
@@ -26,7 +25,7 @@ aktuelle Liste der Namen von bereits angemeldeten Clients gesendet.
 - nach einem Anmeldevorgang erhalten alle bisher angemeldeten Clients
 weiter eine Meldung, dass sich ein neuer Client angemeldet hat
 
-#### Client
+### Client
 - Möglichkeit zum Aufbau und Trennen einer Verbindung zum Server
 - Weitergabe einer Eingabemaske mit Name und Passwort um sich beim
 Server anzumelden
@@ -35,8 +34,8 @@ Server anzumelden
 zu visualisieren
 
 
-### Meilenstein 2
-#### Server
+## Meilenstein 2
+### Server
 - Implementierung als grafische Benutzerschnittstelle (siehe Anhang 1)
 - Realisierung einer visuellen Anzeige, einschließlich dynamischer Aktualisierung von
 folgenden Elementen: (siehe Anhang 1, Anhang 2 und Anhang 3)
@@ -62,7 +61,7 @@ Funktionalitäten bereitgestellt werden müssen:
 - Permanentes Ausschließen von Benutzern (Verbindung zum Client trennen und
 erneutes Anmelden des Clients verhindern)
 
-#### Client
+### Client
 - Implementierung als grafische Benutzerschnittstelle
 - Realisierung einer visuellen Anzeige einschließlich dynamischer Aktualisierung von
 folgenden Elementen: (siehe Anhang 5)
@@ -76,8 +75,8 @@ empfangenden Client-Seite durch Einbindung geeigneter Bibliotheksfunktionen
 gesondert dargestellt werden sollen.
 
 
-### Meilenstein 3
-#### Server
+## Meilenstein 3
+### Server
 - Weiterentwicklung des Chatroom-Systems durch die Einführung einer Kommunika-
 tion über private Räume zwischen 2 Clients (siehe Anhang 1)
 - Bereitstellung von Mechanismen für Clients zur Verwaltung von privaten Räumen,
@@ -86,7 +85,7 @@ wobei folgende Funktionalitäten vom Server bereitgestellt werden müssen:
 - Senden von Nachrichten von einem Client zum anderen Client
 - Schließen eines privaten Raumes
 
-#### Client
+### Client
 - Bereitstellen eines Dialogfensters sowie folgender Wahlmöglichkeiten zum Umgang
 mit privaten Räumen: (siehe Anhang 1)
 - Eröffnen eines privaten Raumes
@@ -94,7 +93,7 @@ mit privaten Räumen: (siehe Anhang 1)
 - Schließen eines privaten Raumes
 
 
-### Andere Ideen
+## Andere Ideen
 - Passwort Transfer mit MD5
 - Ende zu Ende Verschlüsselung in privaten Räumen
 ...
