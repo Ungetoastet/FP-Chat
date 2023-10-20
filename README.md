@@ -5,7 +5,8 @@ Fortgeschrittenes Programmierpraktikum WS23/24: Chatprogramm
 Einer kann was, die andere malt.
 
 # Features
-- Noch keine lol
+- Multithreaded server
+- Simple Java client (Wird durch WebUI ersetzt)
 
 # ToDo
 ## Meilenstein 1
