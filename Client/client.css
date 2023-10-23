@@ -1,10 +1,10 @@
 :root {
     /* Paletten generator: https://coolors.co/ff6781-121417-ccf5ac-717568-297373 */
 
-    --background: #121417;
-    --main: #FF6781;
-    --accent: #CCF5AC;
-    --soft: #717568;
+    --background: #211C1E;
+    --main: #8CE3DA;
+    --accent: #E9CBC4;
+    --soft: #61618d;
 }
 
 body {
@@ -26,13 +26,14 @@ div#window-chat {
     margin: 40px 10px 10px 10px;
     padding: 10px;
     overflow-y: scroll;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 
 div#window-type {
     display: flex; 
     margin: 0px 10px; 
     width: 70%;
-    padding: 10px;
     align-items: right;
 }
 
@@ -48,36 +49,46 @@ input[type=text]#composer {
 }
 
 div.message {
-    margin: 30px 10px;
+    margin: 10px 10px;
     border-radius: 15px;
     color: var(--background);
     font-weight: bolder;
     padding: 10px 20px;
     width: fit-content;
+    max-width: 70%;
+    overflow-wrap: break-word;
 }
 
 div.message#sent {
     margin-left: auto;
     margin-right: 10px;
-    background-color: var(--accent);
+    background-color: var(--background);
+    border: 2px solid var(--main);
+    color: var(--main);
 }
 
 div.message#recieved {
     background-color: var(--main);
 }
 
+div.message#recieved h3{
+    color: var(--background);
+    font-size: small;
+}
+
 div.message#server {
     background-color: var(--soft);
-    margin-left: 45%;
-    margin-right: 45%;
-    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: small;    
+    margin-top: 10px;
 }
 
 div#window-chat i {
     opacity: 50%;
 }
 
-button#main {
+button.main {
     border-radius: 15px;
     border-width: 0px;
     color: var(--background);
@@ -86,10 +97,10 @@ button#main {
     padding: 10px 20px;
 }
 
-button#main:hover {
+button.main:hover {
     box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0,0,0,0);
 }
 
-button#main:active {
+button.main:active {
     box-shadow: inset 0px 0px 3px 3px rgba(0,0,0,0.3);
 }

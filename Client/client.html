@@ -2,7 +2,6 @@
 <html>
     <head>
         <link rel="stylesheet" href="client.css">
-        <script src="client.js"></script>
         <title>LRChat</title>
     </head>
     <body>
@@ -11,19 +10,15 @@
 
         <br><br>
         <div style="width: 20%;">
-            Jo moin Lucie, du fragst dich safe warum des hier so hässlich
-            bzw langweilig ist. Habs irgendwie noch nicht hinbekommen
-            die css file zu laden, viel Spass.
-            Deine Baustelle: /client -> client.html und client.css
         </div>
-
+        
         <div id="window-chat">
-            <i>Anfang der Unterhaltung. Viel Spaß :)</i>
         </div>
         <div id="window-type">
-            <input type="text" id="composer">
-            <button id="main">SEND</button>
+            <input type="text" id="composer" placeholder="Hier tippen...">
+            <button class="main" id="send" onclick="send_message()">SEND</button>
         </div>
-
+        
     </body>
+    <script src="client.js"></script>
 </html>

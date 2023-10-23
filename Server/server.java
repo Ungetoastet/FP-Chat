@@ -38,7 +38,6 @@ public class server {
 }
 
 class ServerThread extends Thread {
-    
     Socket client;
     MessageHandler msgHandler;
     InputStream in;
@@ -78,10 +77,11 @@ class ServerThread extends Thread {
             System.out.println("Handshake successful!");
             
             // Message read loop
+            send_message("SERVER Du bist jetzt verbunden.");
             while (!client.isClosed()) {
                 System.out.println("Waiting for data...");
                 String msg = wait_for_message();
-                send_message("Fuck was soll das?");
+                msgHandler.push_message(this, msg);
                 System.out.println("Recieved message: " + msg);
             }
 
@@ -144,7 +144,7 @@ class ServerThread extends Thread {
             int opcode = firstByte & 0b00001111;
             if (opcode == 0x8) {
                 client.close();
-                return "Closing Frame";
+                return "";
             }
 
             // Determine if the frame is masked
