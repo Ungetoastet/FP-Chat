@@ -6,7 +6,16 @@ import java.util.*;
 public class client{
     public static void main(String[] args) {
         try {
-            Socket server = new Socket("localhost", 1870);
+            // Server Connection
+            System.out.print("Chat server address (Default localhost): ");
+            String server_address = readString();
+            if (server_address.equals("")) {server_address = "localhost";}
+            
+            System.out.print("Chat server port (Default 1870): ");
+            String server_port = readString();
+            if (server_port.equals("")) {server_port = "1870";}
+            Socket server = new Socket(server_address, Integer.parseInt(server_port));
+
             InputStream in = server.getInputStream();
             OutputStream out = server.getOutputStream();
 

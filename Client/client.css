@@ -68,8 +68,13 @@ div.message#recieved {
 
 div.message#server {
     background-color: var(--soft);
-    margin-left: auto;
+    margin-left: 45%;
     margin-right: 45%;
+    width: max-content;
+}
+
+div#window-chat i {
+    opacity: 50%;
 }
 
 button#main {
