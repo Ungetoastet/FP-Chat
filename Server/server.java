@@ -42,10 +42,15 @@ class ServerThread extends Thread {
     MessageHandler msgHandler;
     InputStream in;
     OutputStream out;
+    Account account;
 
     ServerThread (Socket client, MessageHandler msgHandler) {
         this.client = client;
         this.msgHandler = msgHandler;
+    }
+
+    public Account getAccount() {
+        return account;
     }
     
     @Override
@@ -76,8 +81,42 @@ class ServerThread extends Thread {
 
             System.out.println("Handshake successful!");
             
+            // Login user
+            boolean logged_in = false;
+            while (!logged_in) {
+                String loginmsg = wait_for_message();
+                String[] login = loginmsg.split("<\\|>");
+                if (login[0].equals("LOGIN")) {
+                    for (Account account : msgHandler.registered_users) {
+                        if (account.name.equals(login[1]) && account.password.equals(login[2])) {
+                            if (!account.allowed) {
+                                send_message("LOGIN BANNED");
+                            }
+                            this.account = account;
+                            logged_in = true;
+                            msgHandler.push_message(this, "SERVER " + account.name + " ist beigetreten");
+                            break;
+                        }
+                    }
+                    if (!logged_in) {
+                        send_message("LOGIN WRONG");
+                    }
+                }
+                if (login[0].equals("REGISTER")) {
+                    this.account = new Account(login[1], login[2]);
+                    msgHandler.registered_users.add(this.account);
+                    msgHandler.push_message(this, "SERVER " + account.name + " hat sich registriert");
+                    logged_in = true;
+                }
+            }
+
+            send_message("LOGIN SUCCESS");
+
+            String greeting = "SERVER Du bist jetzt verbunden. Angemeldete Benutzer: ";
+            greeting += msgHandler.getActiveAccountList();
+            send_message(greeting);
+            
             // Message read loop
-            send_message("SERVER Du bist jetzt verbunden.");
             while (!client.isClosed()) {
                 System.out.println("Waiting for data...");
                 String msg = wait_for_message();
@@ -125,6 +164,14 @@ class ServerThread extends Thread {
         try {
             // Send the frame
             out.write(frame);
+        }
+        catch (SocketException e) {
+            try {
+                client.close();
+                msgHandler.deregister_client(this);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
         catch (IOException e) {
             System.out.println("Error in server thread - send_message\n" + e.toString());
@@ -199,6 +246,7 @@ class MessageHandler extends Thread{
     MessageHandler() {
         this.client_threads = new LinkedList<>();
         this.registered_users = new LinkedList<>();
+        this.registered_users.add(new Account("robert", "scheer"));
     }
 
     public void register_client(ServerThread client) {
@@ -218,17 +266,37 @@ class MessageHandler extends Thread{
             client.send_message(message);
         }
     }
+
+    public Account[] activeAccounts() {
+        Account[] accounts = new Account[client_threads.size()];
+        int i = 0;
+        for (ServerThread cli : client_threads) {
+            accounts[i] = cli.getAccount();
+            i += 1;
+        }
+        return accounts;
+    }
+
+    public String getActiveAccountList() {
+        if (client_threads.size() == 0) {
+            return "";
+        }
+        
+        String s = "";
+        for (Account account : activeAccounts()) {
+            s += account.name + ", ";
+        }
+        return s;
+    }
 }
 
 class Account {
     boolean allowed = true;
     String name;
-    String login;
     String password;
 
-    Account(String name, String login, String password) {
+    Account(String name, String password) {
         this.name = name;
-        this.login = login;
         this.password = password;
     }
 
@@ -239,4 +307,5 @@ class Account {
     public void unban() {
         this.allowed = true;
     }
+
 }

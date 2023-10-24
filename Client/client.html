@@ -19,6 +19,20 @@
             <button class="main" id="send" onclick="send_message()">SEND</button>
         </div>
         
+        <!-- The Modal -->
+        <div id="login" class="modal">
+            <div class="modal-content">
+                <h1>Login</h1>
+                <p>Bitte logge dich mit deinen Daten ein.</p>
+                <input id="name" type="text" placeholder="Name"><br>
+                <input id="pw" type="password" placeholder="Passwort"><br>
+                <input type="password" id="passconfirm" placeholder="Passwort wiederholen">
+                <div style="margin-top: 20px;">
+                    <button class="secondary"  style="margin: auto; width: 47%;" onclick="register()">Registrieren</button>
+                    <button class="main" style="margin: auto; width: 47%;" onclick="login()">Login</button>
+                </div>
+            </div>
+        </div>
     </body>
     <script src="client.js"></script>
 </html>
