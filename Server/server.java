@@ -10,30 +10,192 @@ import java.nio.charset.StandardCharsets;
 
 
 public class server {
+    static MessageHandler msgHandler;
+    static ServerSocket server;
+    
     public static void main(String[] args) {
-        try (ServerSocket server = new ServerSocket(1870)) {
+        try {
+            server = new ServerSocket(1870);
             System.out.println("Server running on " + server.getInetAddress() + ":" + server.getLocalPort());
             System.out.println("Waiting for connections...");
-            boolean running = true;
+            boolean accept_new_connections = true;
 
-            MessageHandler msgHandler = new MessageHandler();
+            // Create message handler
+            msgHandler = new MessageHandler();
+
+            // Create and start server manager
+            ServerManager manager = new ServerManager(msgHandler);
+            manager.start();
             
-            while (running) {
+            // Connect new clients
+            while (accept_new_connections) {
                 ServerThread thread = new ServerThread(server.accept(), msgHandler);
                 thread.start();
                 msgHandler.register_client(thread);
             }
-        } 
+        }
+        catch (SocketException e) {
+            System.out.println("Server shut down.");
+        }
         catch (IOException e) {
             System.out.println("Error in server - setup:\n" + e.toString());
         }
     }
-    
-    static String readString() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            String s = scanner.nextLine();
-            return s;
+
+    public static void stop_server() {
+        for (ServerThread client : msgHandler.getClientThreads()) {
+            client.disconnect();
         }
+        try {
+            server.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class ServerManager extends Thread {
+    MessageHandler msgHandler;
+    String helpString =   "\nServer terminal help: \n"
+                        + "EXIT                        Stops the server \n"
+                        + "KICK <name>                 Kicks the user\n"
+                        + "BAN <name>                  Bans the user and kicks them\n"
+                        + "UNBAN <name>                Unbans the user \n"
+                        + "REGISTER <name> <password>  Registers a new user \n"
+                        + "RENAME <name> <new_name>    Changes the name of a user\n"
+                        + "SETPASS <name> <new_pwd>    Changes the password of a user\n"
+                        + "SAY <text>                  Sends a message to all clients\n"
+                        + "HELP                        Show this page\n";
+
+    ServerManager (MessageHandler msgHandler) {
+        this.msgHandler = msgHandler;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Server Manager started");
+        while (!server.server.isClosed()) {
+            System.out.print("[SERVER] << ");
+            String input = readString();
+
+            String cmd = input.split(" ")[0].toUpperCase();
+            String[] args = input.split(" ");
+
+            switch (cmd) {
+                case "EXIT":
+                    System.out.println("[SERVER] >> Stopping server");
+                    server.stop_server();
+                    break;
+
+                case "REGISTER":
+                    msgHandler.registered_users.add(
+                        new Account(args[1], args[2]));
+                    break;
+
+                case "BAN":
+                    if (!banUser(args[1])) {
+                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                    }
+                    break;
+
+                case "KICK":
+                    if (!kickUser(args[1])) {
+                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                    }
+                    break;
+                    
+                case "UNBAN":
+                    if (!unbanUser(args[1])) {
+                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                    }
+                    break;
+                    
+                case "RENAME":
+                    if (!rename(args[1], args[2])) {
+                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                    }
+                    break;
+
+                case "SETPASS":
+                    if (!change_pw(args[1], args[2])) {
+                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                    }
+                    break;
+                
+                case "SAY":
+                    msgHandler.push_message(null, "SERVER " + input.split(" ", 2)[1]);
+                    break;
+                
+                case "HELP":
+                    System.out.println(helpString);
+                    break;
+                    
+                default:
+                    System.out.println("[SERVER] >> Unknown command " + cmd + ". Type 'help' for help page");
+            }
+        }
+    }
+
+    boolean kickUser(String name) {
+        for (ServerThread client : msgHandler.client_threads) {
+            if (client.account.name.equals(name)) {
+                client.disconnect();
+                msgHandler.push_message(null, "SERVER Kicked " + name);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean banUser(String name) {
+        // Disallow the account...
+        Account target = find_account_by_name(name);
+        if (target == null) { return false; }
+        target.ban();
+
+        // ... and terminate the connection (if there is one)
+        kickUser(name);
+
+        msgHandler.push_message(null, "SERVER Banned " + name);
+        return true;
+    }
+    
+    boolean unbanUser(String name) {
+        // Allow the account...
+        Account target = find_account_by_name(name);
+        if (target == null) { return false; }
+        target.unban();
+        msgHandler.push_message(null, "SERVER Unbanned " + name);
+        return true;
+    }
+    
+    boolean rename(String name, String newname) {
+        Account target = find_account_by_name(name);
+        if (target == null) { return false; }
+        target.name = newname;
+        return true;
+    }
+
+    boolean change_pw(String name, String newpass) {
+        Account target = find_account_by_name(name);
+        if (target == null) { return false; }
+        target.password = newpass;
+        return true;
+    }
+    
+    Account find_account_by_name(String name) {
+        for (Account account : msgHandler.registered_users) {
+            if (account.name.equals(name)) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    static String readString() {
+        Scanner scanner = new Scanner(System.in);
+        String s = scanner.nextLine();
+        return s;
     }
 }
 
@@ -91,6 +253,7 @@ class ServerThread extends Thread {
                         if (account.name.equals(login[1]) && account.password.equals(login[2])) {
                             if (!account.allowed) {
                                 send_message("LOGIN BANNED");
+                                break;
                             }
                             this.account = account;
                             logged_in = true;
@@ -231,10 +394,27 @@ class ServerThread extends Thread {
             String decodedData = new String(payloadData, "UTF-8");
             return decodedData;
         }
+        catch (SocketException e) {
+            try {
+                client.close();
+                msgHandler.deregister_client(this);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return "";
+        }
         catch (Exception e) {
             System.out.println("Error in server thread - read_message:\n");
             e.printStackTrace();
-            return "SERVER ERROR";
+            return "";
+        }
+    }
+
+    public void disconnect() {
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
@@ -247,6 +427,7 @@ class MessageHandler extends Thread{
         this.client_threads = new LinkedList<>();
         this.registered_users = new LinkedList<>();
         this.registered_users.add(new Account("robert", "scheer"));
+        this.registered_users.add(new Account("lucie", "wolf"));
     }
 
     public void register_client(ServerThread client) {
@@ -281,12 +462,16 @@ class MessageHandler extends Thread{
         if (client_threads.size() == 0) {
             return "";
         }
-        
+
         String s = "";
         for (Account account : activeAccounts()) {
             s += account.name + ", ";
         }
         return s;
+    }
+
+    public LinkedList<ServerThread> getClientThreads() {
+        return client_threads;
     }
 }
 

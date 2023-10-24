@@ -15,7 +15,7 @@ Einer kann was, die andere malt.
 - ✅ starten und beenden des ServerSockets
 - ✅ Realisierung eines Netzwerk-Listener, der es neuen Clients ermöglicht, sich anzumelden
 - ✅ Realisierung eines Nachrichten-Listener, welcher die Voraussetzung für den Nachrichtenaustausch zwischen Clients schafft
-- die Möglichkeit, Namen und dazugehörige Passwörter zu speichern und zu verwalten – solange der Server läuft
+- ✅ die Möglichkeit, Namen und dazugehörige Passwörter zu speichern und zu verwalten – solange der Server läuft
 - ✅ Realisierung eines Anmeldevorgangs, bei dem sich ein Client mit Namen und Passwort anmeldet. Sollte der Name noch nicht registriert sein, werden diese Daten auf dem Server gespeichert
 - ✅ nach einem Anmeldevorgang bekommt der sich gerade angemeldete Client eine aktuelle Liste der Namen von bereits angemeldeten Clients gesendet.
 - ✅ nach einem Anmeldevorgang erhalten alle bisher angemeldeten Clients weiter eine Meldung, dass sich ein neuer Client angemeldet hat
@@ -42,15 +42,15 @@ Einer kann was, die andere malt.
 - Löschen von Räumen
 - Bereitstellung von Methoden zur Verwaltung von Benutzern, wobei folgende Funktionalitäten bereitgestellt werden müssen:
 - Verwarnen von Benutzern (Client eine Nachricht schreiben)
-- Temporäres Ausschließen von Benutzern (Verbindung zum Client trennen)
-- Permanentes Ausschließen von Benutzern (Verbindung zum Client trennen und erneutes Anmelden des Clients verhindern)
+- ✅ Temporäres Ausschließen von Benutzern (Verbindung zum Client trennen)
+- ✅ Permanentes Ausschließen von Benutzern (Verbindung zum Client trennen und erneutes Anmelden des Clients verhindern)
 
 ### Client
-- Implementierung als grafische Benutzerschnittstelle
+- ✅ Implementierung als grafische Benutzerschnittstelle
 - Realisierung einer visuellen Anzeige einschließlich dynamischer Aktualisierung von folgenden Elementen: (siehe Anhang 5)
 - Anzeige der Namen aller vorhandenen Räume
 - Anzeige der Namen aller Benutzer aus demjenigen Raum, in welchem sich der Client befindet
-- Anordnung einer Kommunikationsoberfläche, wodurch die Möglichkeit geschaffen wird, mit anderen Clients zu kommunizieren (siehe Anhang 6)
+- ✅ Anordnung einer Kommunikationsoberfläche, wodurch die Möglichkeit geschaffen wird, mit anderen Clients zu kommunizieren (siehe Anhang 6)
 - Möglichkeit zum Versenden und Empfangen von PDF- und Bilddateien, die auf der empfangenden Client-Seite durch Einbindung geeigneter Bibliotheksfunktionen gesondert dargestellt werden sollen.
 
 
