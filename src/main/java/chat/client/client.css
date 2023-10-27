@@ -18,10 +18,22 @@ h1 {
     color: var(--main);
 }
 
+div#grid-container {
+    display: grid;
+    grid-template-columns: 1fr 20%;
+}
+
+div#chat-container {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-area: 1 / 1 / 2 / 2;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+}
+
 div#window-chat {
     border: 1px solid var(--main);
     border-radius: 10px;
-    width: 70%;
     height: 50vh;
     margin: 40px 10px 10px 10px;
     padding: 10px;
@@ -31,10 +43,9 @@ div#window-chat {
 }
 
 div#window-type {
-    display: flex; 
-    margin: 0px 10px; 
-    width: 70%;
-    align-items: right;
+    display: flex;
+    margin: 0px 10px;
+    align-items: flex-end;
 }
 
 input {
@@ -59,7 +70,7 @@ input#composer {
 
 input#passconfirm {
     display: none;
-    animation: scale-in-ver-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; 
+    animation: scale-in-ver-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 
 div.message {
@@ -96,7 +107,7 @@ div.message#server {
     background-color: var(--soft);
     margin-left: auto;
     margin-right: auto;
-    font-size: small;    
+    font-size: small;
     margin-top: 10px;
 }
 
@@ -143,7 +154,7 @@ button:active {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
 }
-  
+
 /* Modal Content/Box */
 .modal-content {
     background-color: var(--background);
@@ -157,7 +168,7 @@ button:active {
 
 
 /* Animations */
-@keyframes scale-in-ver-top {  
+@keyframes scale-in-ver-top {
     0% {
       transform: scaleY(0);
       transform-origin: 100% 0%;
@@ -169,4 +180,4 @@ button:active {
       opacity: 1;
     }
 }
-  
+

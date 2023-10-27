@@ -11,14 +11,18 @@
         <br><br>
         <div style="width: 20%;">
         </div>
-        
-        <div id="window-chat">
+
+        <div id="grid-container">
+            <div id="chat-container">
+                <div id="window-chat">
+                </div>
+                <div id="window-type">
+                    <input type="text" id="composer" placeholder="Hier tippen...">
+                    <button class="main" id="send" onclick="send_message()">SEND</button>
+                </div>
+            </div>
         </div>
-        <div id="window-type">
-            <input type="text" id="composer" placeholder="Hier tippen...">
-            <button class="main" id="send" onclick="send_message()">SEND</button>
-        </div>
-        
+
         <!-- The Modal -->
         <div id="login" class="modal">
             <div class="modal-content">

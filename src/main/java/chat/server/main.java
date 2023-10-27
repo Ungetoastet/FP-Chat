@@ -19,7 +19,6 @@ public class main {
         try {
             server = new ServerSocket(1870);
             System.out.println("Server running on " + server.getInetAddress() + ":" + server.getLocalPort());
-            System.out.println("Waiting for connections...");
             boolean accept_new_connections = true;
 
             // Create message handler
@@ -29,7 +28,22 @@ public class main {
             ServerManager manager = new ServerManager(msgHandler);
             manager.start();
 
+            // Automatically open the frontend
+            try {
+                String absolut_project_path = System.getProperty("user.dir").replaceAll("\\\\", "/");;
+                String relative_path = "/src/main/java/chat/server/frontend/server.html";
+                java.awt.Desktop.getDesktop().browse(new java.net.URI(absolut_project_path+relative_path));
+            } catch (IOException | URISyntaxException e) {
+                System.out.println("Error in server frontend - startup:\n");
+                e.printStackTrace();
+            }
+            // Start server manager frontend server and wait for connection
+            ServerSocket frontendServer = new ServerSocket(1871);
+            FrontendThread frontendThread = new FrontendThread(frontendServer.accept(), msgHandler);
+            frontendThread.start();
+
             // Connect new clients
+            System.out.println("Waiting for connections...");
             while (accept_new_connections) {
                 ServerThread thread = new ServerThread(server.accept(), msgHandler);
                 thread.start();

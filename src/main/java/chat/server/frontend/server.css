@@ -1,0 +1,29 @@
+div.window {
+    border: 1px solid var(--main);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+div#registered {
+    grid-area: 3 / 4 / 4 / 5;
+}
+div#connected {
+    grid-area: 2 / 4 / 3 / 5;
+}
+div#rooms {
+    grid-area: 1 / 3 / 4 / 4;
+}
+div#management {
+    grid-area: 1 / 4 / 2 / 5;
+}
+div#chat {
+    grid-area: 1 / 1 / 4 / 3;
+}
+
+div#main-container {
+    display: grid;
+    grid-template-columns: repeat(4, 24%);
+    grid-template-rows: repeat(3, 40%);
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+}
