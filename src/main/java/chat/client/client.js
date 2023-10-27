@@ -107,13 +107,20 @@ function register() {
     if (pwc.value != pw.value) {
         alert("Passwörter stimmen nicht überein!");
         pwc.value = "";
+        return;
     }
     let name = document.getElementById("name");
     if (name.value.length + pw.value.length < 7) {
         alert("Name und Passwort müssen jeweils mindestens 3 Zeichen lang sein.")
+        return;
     }
     if (name.value.includes("<|>") || pw.value.includes("<|>")) {
         alert("<|> is not allowed.");
+        return;
+    }
+    if(name.value == "SERVER" || name.value == "LOGIN" || name.value == "REGISTER"){
+        alert("Name ist reserviert und kann nicht verwendet werden.")
+        return;
     }
     socket.send("REGISTER<|>" + name.value + "<|>" + pw.value);
     user_name = name.value;
