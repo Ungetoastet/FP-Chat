@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
@@ -59,6 +58,14 @@ class FrontendThread extends Thread{
             e.printStackTrace();
         }
 
+        // Message read loop
+        while (!socket.isClosed()) {
+            System.out.println("Waiting for data...");
+            String msg = wait_for_message();
+            msgHandler.push_message(null, msg);
+            System.out.println("Recieved message: " + msg);
+        }
+
         System.out.println("Server frontend handshake successful!");
     }
 
@@ -100,6 +107,78 @@ class FrontendThread extends Thread{
             }
         } catch (IOException e) {
             System.out.println("Error in server thread - send_message\n" + e.toString());
+        }
+    }
+
+    String wait_for_message() {
+        InputStream in;
+        try {
+            in = socket.getInputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            // Read the first two bytes to determine the frame type and payload length
+            int firstByte = in.read();
+            if (firstByte == -1) {
+                return "";
+            }
+            int secondByte = in.read();
+
+            // Determine the opcode (frame type)
+            int opcode = firstByte & 0b00001111;
+            if (opcode == 0x8) {
+                socket.close();
+                return "";
+            }
+
+            // Determine if the frame is masked
+            boolean isMasked = (secondByte & 0b10000000) != 0;
+
+            // Read the payload length
+            int payloadLength = secondByte & 0b01111111;
+            if (payloadLength == 126) {
+                payloadLength = (in.read() << 8) | in.read();
+            } else if (payloadLength == 127) {
+                // For large payloads (more than 2^16 bytes), the next 8 bytes represent the payload length
+                payloadLength = 0;
+                for (int i = 0; i < 8; i++) {
+                    payloadLength |= (in.read() & 0xFF) << (56 - 8 * i);
+                }
+            }
+
+            // Read the masking key if the frame is masked
+            byte[] maskingKey = null;
+            if (isMasked) {
+                maskingKey = new byte[4];
+                in.read(maskingKey);
+            }
+
+            // Read the payload data
+            byte[] payloadData = new byte[payloadLength];
+            in.read(payloadData);
+
+            // Unmask the payload data if the frame is masked
+            if (isMasked) {
+                for (int i = 0; i < payloadLength; i++) {
+                    payloadData[i] = (byte) (payloadData[i] ^ maskingKey[i % 4]);
+                }
+            }
+
+            // Handle the payload data (e.g., convert it to a string)
+            return new String(payloadData, StandardCharsets.UTF_8);
+        } catch (SocketException e) {
+            try {
+                socket.close();
+                msgHandler.deregister_frontend();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return "";
+        } catch (Exception e) {
+            System.out.println("Error in server thread - read_message:\n");
+            e.printStackTrace();
+            return "";
         }
     }
 }

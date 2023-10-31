@@ -1,4 +1,15 @@
 const socket = new WebSocket("ws://localhost:1871");
+const typing_input = document.getElementById("composer");
+const typing_button = document.getElementById("send");
+
+// Add an event listener to the input field for the "keydown" event
+typing_input.addEventListener("keydown", function(event) {
+    // Check if the pressed key is the Enter key (keycode 13)
+    if (event.keyCode == 13) {
+        // Trigger a click event on the button
+        typing_button.click();
+    }
+});
 
 socket.addEventListener('open', (event) => {
     console.log('Connected to the Frontend interface');
@@ -42,10 +53,7 @@ socket.addEventListener('error', (error) => {
 });
 
 function send_message() {
-    const message_window = document.getElementById("window-chat");
     let text = typing_input.value;
-    socket.send(user_name + " " + text);
+    socket.send("SERVER " + text);
     typing_input.value = "";
-    message_window.innerHTML += '<div class="message" id="sent">' + text + '<\div>';
-    message_window.scrollTop = message_window.scrollHeight;
 }
