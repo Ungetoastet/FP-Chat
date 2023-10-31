@@ -38,7 +38,7 @@ class ServerThread extends Thread {
             this.in = client.getInputStream();
             this.out = client.getOutputStream();
 
-            Scanner s = new Scanner(in, "UTF-8");
+            Scanner s = new Scanner(in, StandardCharsets.UTF_8);
 
             // Handshake for websocket upgrade
             String data = s.useDelimiter("\\r\\n\\r\\n").next();
@@ -50,8 +50,10 @@ class ServerThread extends Thread {
                         + "Connection: Upgrade\r\n"
                         + "Upgrade: websocket\r\n"
                         + "Sec-WebSocket-Accept: "
-                        + Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1").digest((match.group(1) + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").getBytes("UTF-8")))
-                        + "\r\n\r\n").getBytes("UTF-8");
+                        + Base64.getEncoder().encodeToString(MessageDigest.getInstance("SHA-1")
+                                    .digest((match.group(1) + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+                                    .getBytes(StandardCharsets.UTF_8)))
+                        + "\r\n\r\n").getBytes(StandardCharsets.UTF_8);
                 out.write(response, 0, response.length);
             }
 
@@ -104,9 +106,9 @@ class ServerThread extends Thread {
             s.close();
             client.close();
         } catch (IOException e) {
-            System.out.println("Error in server - IO setup:\n" + e.toString());
+            System.out.println("Error in server - IO setup:\n" + e);
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Error in server - ALG setup:\n" + e.toString());
+            System.out.println("Error in server - ALG setup:\n" + e);
         }
     }
 
@@ -147,7 +149,7 @@ class ServerThread extends Thread {
                 e1.printStackTrace();
             }
         } catch (IOException e) {
-            System.out.println("Error in server thread - send_message\n" + e.toString());
+            System.out.println("Error in server thread - send_message\n" + e);
         }
     }
 

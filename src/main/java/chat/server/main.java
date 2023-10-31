@@ -2,14 +2,6 @@ package chat.server;
 
 import java.net.*;
 import java.io.*;
-import java.util.*;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.nio.charset.StandardCharsets;
-
 
 public class main {
     static MessageHandler msgHandler;
@@ -30,7 +22,7 @@ public class main {
 
             // Automatically open the frontend
             try {
-                String absolut_project_path = System.getProperty("user.dir").replaceAll("\\\\", "/");;
+                String absolut_project_path = System.getProperty("user.dir").replaceAll("\\\\", "/");
                 String relative_path = "/src/main/java/chat/server/frontend/server.html";
                 java.awt.Desktop.getDesktop().browse(new java.net.URI(absolut_project_path+relative_path));
             } catch (IOException | URISyntaxException e) {
@@ -41,6 +33,8 @@ public class main {
             ServerSocket frontendServer = new ServerSocket(1871);
             FrontendThread frontendThread = new FrontendThread(frontendServer.accept(), msgHandler);
             frontendThread.start();
+
+            msgHandler.register_frontend(frontendThread);
 
             // Connect new clients
             System.out.println("Waiting for connections...");

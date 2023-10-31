@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -15,10 +16,16 @@ import java.util.regex.Pattern;
 class FrontendThread extends Thread{
     Socket socket;
     MessageHandler msgHandler;
+    OutputStream out;
 
     FrontendThread(Socket socket, MessageHandler msgHandler) {
         this.socket = socket;
         this.msgHandler = msgHandler;
+        try {
+            this.out = socket.getOutputStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -53,5 +60,46 @@ class FrontendThread extends Thread{
         }
 
         System.out.println("Server frontend handshake successful!");
+    }
+
+    public void send_message(String message) {
+        byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+        byte[] frame = new byte[10 + messageBytes.length];
+
+        // Fin bit: 1, Text frame opcode: 0x1
+        frame[0] = (byte) 0b10000001;
+
+        // Payload length (7 bits)
+        int payloadLength = messageBytes.length;
+        if (payloadLength <= 125) {
+            frame[1] = (byte) payloadLength;
+        } else if (payloadLength <= 0xFFFF) {
+            frame[1] = (byte) 126;
+            frame[2] = (byte) ((payloadLength >> 8) & 0xFF);
+            frame[3] = (byte) (payloadLength & 0xFF);
+        } else {
+            // For large payloads (more than 2^16 bytes)
+            frame[1] = (byte) 127;
+            for (int i = 0; i < 8; i++) {
+                frame[2 + i] = (byte) ((payloadLength >> ((7 - i) * 8)) & 0xFF);
+            }
+        }
+
+        // Copy payload data into frame
+        System.arraycopy(messageBytes, 0, frame, 2, messageBytes.length);
+
+        try {
+            // Send the frame
+            out.write(frame);
+        } catch (SocketException e) {
+            try {
+                socket.close();
+                msgHandler.deregister_frontend();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        } catch (IOException e) {
+            System.out.println("Error in server thread - send_message\n" + e.toString());
+        }
     }
 }

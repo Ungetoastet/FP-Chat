@@ -3,6 +3,7 @@ package chat.server;
 import java.util.LinkedList;
 
 class MessageHandler extends Thread {
+    FrontendThread serverfrontend;
     LinkedList<ServerThread> client_threads;
     LinkedList<Account> registered_users;
 
@@ -21,12 +22,22 @@ class MessageHandler extends Thread {
         this.client_threads.remove(client);
     }
 
+    public void register_frontend(FrontendThread newsfe) {
+        this.serverfrontend = newsfe;
+    }
+
+    public void deregister_frontend() {
+        this.serverfrontend = null;
+    }
+
     public void push_message(ServerThread sender, String message) {
+        if (serverfrontend != null) {
+            serverfrontend.send_message(message);
+        }
         for (ServerThread client : client_threads) {
             if (client == sender) {
                 continue;  // Dont send the message back to the sender
             }
-
             client.send_message(message);
         }
     }

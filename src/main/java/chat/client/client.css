@@ -100,7 +100,7 @@ div.message#recieved h3{
     color: var(--soft);
     font-size: smaller;
     margin: 0px;
-    font-weight: light;
+    font-weight: normal;
 }
 
 div.message#server {
