@@ -57,3 +57,7 @@ function send_message() {
     socket.send("SERVER " + text);
     typing_input.value = "";
 }
+
+function stop_server() {
+    socket.send("CONTROL EXIT");
+}

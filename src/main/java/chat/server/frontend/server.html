@@ -18,9 +18,22 @@
             </div>
         </div>
         <div class="window" id="rooms">Rooms</div>
-        <div class="window" id="registered">Registered Accounts</div>
-        <div class="window" id="connected">Connected clients</div>
-        <div class="window" id="management">Manage Server settings here</div>
+        <div class="window" id="registered">
+            <i>Registered Accounts</i>
+            <div class="namelist">
+                <div class="nameline"><div>Name</div><button class="secondary">Ban</button></div>
+            </div>
+        </div>
+        <div class="window" id="connected">
+            <i>Connected clients </i>
+            <div class="namelist">
+                <div class="nameline"><div>Name</div><button class="secondary">Kick</button></div>
+            </div>
+        </div>
+        <div class="window" id="management">
+            <i>Server management</i>
+            <button class="main" style="width: 100%" onclick="stop_server()">Stop server</button>
+        </div>
     </div>
 </body>
 <script src="server.js"></script>

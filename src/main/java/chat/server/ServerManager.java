@@ -25,62 +25,64 @@ class ServerManager extends Thread {
         while (!main.server.isClosed()) {
             System.out.print("[SERVER] << ");
             String input = readString();
+            process_command(input);
+        }
+    }
 
-            String cmd = input.split(" ")[0].toUpperCase();
-            String[] args = input.split(" ");
+    public void process_command(String input) {
+        String cmd = input.split(" ")[0].toUpperCase();
+        String[] args = input.split(" ");
+        switch (cmd) {
+            case "EXIT":
+                System.out.println("[SERVER] >> Stopping server");
+                main.stop_server();
+                break;
 
-            switch (cmd) {
-                case "EXIT":
-                    System.out.println("[SERVER] >> Stopping server");
-                    main.stop_server();
-                    break;
+            case "REGISTER":
+                msgHandler.registered_users.add(
+                        new Account(args[1], args[2]));
+                break;
 
-                case "REGISTER":
-                    msgHandler.registered_users.add(
-                            new Account(args[1], args[2]));
-                    break;
+            case "BAN":
+                if (!banUser(args[1])) {
+                    System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                }
+                break;
 
-                case "BAN":
-                    if (!banUser(args[1])) {
-                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
-                    }
-                    break;
+            case "KICK":
+                if (!kickUser(args[1])) {
+                    System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                }
+                break;
 
-                case "KICK":
-                    if (!kickUser(args[1])) {
-                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
-                    }
-                    break;
+            case "UNBAN":
+                if (!unbanUser(args[1])) {
+                    System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                }
+                break;
 
-                case "UNBAN":
-                    if (!unbanUser(args[1])) {
-                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
-                    }
-                    break;
+            case "RENAME":
+                if (!rename(args[1], args[2])) {
+                    System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                }
+                break;
 
-                case "RENAME":
-                    if (!rename(args[1], args[2])) {
-                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
-                    }
-                    break;
+            case "SETPASS":
+                if (!change_pw(args[1], args[2])) {
+                    System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                }
+                break;
 
-                case "SETPASS":
-                    if (!change_pw(args[1], args[2])) {
-                        System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
-                    }
-                    break;
+            case "SAY":
+                msgHandler.push_message(null, "SERVER " + input.split(" ", 2)[1]);
+                break;
 
-                case "SAY":
-                    msgHandler.push_message(null, "SERVER " + input.split(" ", 2)[1]);
-                    break;
+            case "HELP":
+                System.out.println(helpString);
+                break;
 
-                case "HELP":
-                    System.out.println(helpString);
-                    break;
-
-                default:
-                    System.out.println("[SERVER] >> Unknown command " + cmd + ". Type 'help' for help page");
-            }
+            default:
+                System.out.println("[SERVER] >> Unknown command " + cmd + ". Type 'help' for help page");
         }
     }
 

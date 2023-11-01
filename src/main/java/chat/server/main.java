@@ -31,7 +31,7 @@ public class main {
             }
             // Start server manager frontend server and wait for connection
             ServerSocket frontendServer = new ServerSocket(1871);
-            FrontendThread frontendThread = new FrontendThread(frontendServer.accept(), msgHandler);
+            FrontendThread frontendThread = new FrontendThread(frontendServer.accept(), msgHandler, manager);
             frontendThread.start();
 
             msgHandler.register_frontend(frontendThread);
@@ -53,6 +53,7 @@ public class main {
     }
 
     public static void stop_server() {
+        msgHandler.push_message(null, "SERVER Server wurde runtergefahren");
         for (ServerThread client : msgHandler.getClientThreads()) {
             client.disconnect();
         }

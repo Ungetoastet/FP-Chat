@@ -27,3 +27,22 @@ div#main-container {
     grid-column-gap: 10px;
     grid-row-gap: 10px;
 }
+
+.namelist {
+    overflow-y: scroll;
+    height: 90%;
+}
+.namelist .nameline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.namelist .nameline div {
+    text-align: left;
+}
+.namelist .nameline button {
+    text-align: right;
+}
+
+
+

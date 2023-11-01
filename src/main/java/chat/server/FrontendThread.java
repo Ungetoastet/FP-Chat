@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,8 +17,9 @@ class FrontendThread extends Thread{
     Socket socket;
     MessageHandler msgHandler;
     OutputStream out;
+    ServerManager manager;
 
-    FrontendThread(Socket socket, MessageHandler msgHandler) {
+    FrontendThread(Socket socket, MessageHandler msgHandler, ServerManager serverManager) {
         this.socket = socket;
         this.msgHandler = msgHandler;
         try {
@@ -25,6 +27,7 @@ class FrontendThread extends Thread{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.manager = serverManager;
     }
 
     @Override
@@ -38,7 +41,7 @@ class FrontendThread extends Thread{
             // Setup streams and scanners
             System.out.println("Server frontend connected!");
 
-            Scanner s = new Scanner(in, "UTF-8");
+            Scanner s = new Scanner(in, StandardCharsets.UTF_8);
             String data = s.useDelimiter("\\r\\n\\r\\n").next();
             Matcher get = Pattern.compile("^GET").matcher(data);
             if (get.find()) {
@@ -62,6 +65,10 @@ class FrontendThread extends Thread{
         while (!socket.isClosed()) {
             System.out.println("Waiting for data...");
             String msg = wait_for_message();
+            if (Objects.equals(msg.split(" ")[0], "CONTROL")) {
+                manager.process_command(msg.split(" ", 2)[1]);
+                continue;
+            }
             msgHandler.push_message(null, msg);
             System.out.println("Recieved message: " + msg);
         }
