@@ -20,7 +20,12 @@ socket.addEventListener('message', (event) => {
     const message_window = document.getElementById("window-chat");
     console.log(event.data);
 
-    const sender = event.data.split(" ")[0];
+    const sender = event.data.split("<|>")[0];
+
+    if (sender == "REGISTERED") {
+        // Update registered
+        return;
+    }
 
     if (sender == "") {return;}
 
@@ -32,8 +37,8 @@ socket.addEventListener('message', (event) => {
     else {
         msg_html += 'recieved"><h3>' + sender + '</h3>';
     }
-    msg_html += event.data.split(' ').slice(1).join(' '); // Erstes Wort abschneiden
-    msg_html += "</div>"
+    msg_html += event.data.split("<|>")[1];
+    msg_html += "</div>";
     message_window.innerHTML += msg_html;
 
     message_window.scrollTop = message_window.scrollHeight;
@@ -54,10 +59,10 @@ socket.addEventListener('error', (error) => {
 
 function send_message() {
     let text = typing_input.value;
-    socket.send("SERVER " + text);
+    socket.send("SERVER<|>" + text);
     typing_input.value = "";
 }
 
 function stop_server() {
-    socket.send("CONTROL EXIT");
+    socket.send("CONTROL|EXIT");
 }

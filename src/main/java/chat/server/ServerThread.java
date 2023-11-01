@@ -68,30 +68,30 @@ class ServerThread extends Thread {
                     for (Account account : msgHandler.registered_users) {
                         if (account.name.equals(login[1]) && account.password.equals(login[2])) {
                             if (!account.allowed) {
-                                send_message("LOGIN BANNED");
+                                send_message("LOGIN<|>BANNED");
                                 break;
                             }
                             this.account = account;
                             logged_in = true;
-                            msgHandler.push_message(this, "SERVER " + account.name + " ist beigetreten");
+                            msgHandler.push_message(this, "SERVER<|>" + account.name + " ist beigetreten");
                             break;
                         }
                     }
                     if (!logged_in) {
-                        send_message("LOGIN WRONG");
+                        send_message("LOGIN<|>WRONG");
                     }
                 }
                 if (login[0].equals("REGISTER")) {
                     this.account = new Account(login[1], login[2]);
                     msgHandler.registered_users.add(this.account);
-                    msgHandler.push_message(this, "SERVER " + account.name + " hat sich registriert");
+                    msgHandler.push_message(this, "SERVER<|>" + account.name + " hat sich registriert");
                     logged_in = true;
                 }
             }
 
-            send_message("LOGIN SUCCESS");
+            send_message("LOGIN<|>SUCCESS");
 
-            String greeting = "SERVER Du bist jetzt verbunden. Angemeldete Benutzer: ";
+            String greeting = "SERVER<|>Du bist jetzt verbunden. Angemeldete Benutzer: ";
             greeting += msgHandler.getActiveAccountList();
             send_message(greeting);
 

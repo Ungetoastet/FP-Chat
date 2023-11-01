@@ -59,6 +59,7 @@ class MessageHandler extends Thread {
 
         String s = "";
         for (Account account : activeAccounts()) {
+            if (account == null) { return ""; }
             s += account.name + ", ";
         }
         return s;
@@ -66,5 +67,16 @@ class MessageHandler extends Thread {
 
     public LinkedList<ServerThread> getClientThreads() {
         return client_threads;
+    }
+
+    public String getAccountInfo() {
+        StringBuilder s = new StringBuilder();
+        for (Account acc : registered_users) {
+            if (!acc.allowed) {
+                s.append("/");
+            }
+            s.append(acc.name).append("|");
+        }
+        return s.toString();
     }
 }

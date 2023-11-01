@@ -61,12 +61,14 @@ class FrontendThread extends Thread{
             e.printStackTrace();
         }
 
+        update_registered();
+
         // Message read loop
         while (!socket.isClosed()) {
             System.out.println("Waiting for data...");
             String msg = wait_for_message();
-            if (Objects.equals(msg.split(" ")[0], "CONTROL")) {
-                manager.process_command(msg.split(" ", 2)[1]);
+            if (Objects.equals(msg.split("\\|")[0], "CONTROL")) {
+                manager.process_command(msg.split("\\|", 2)[1]);
                 continue;
             }
             msgHandler.push_message(null, msg);
@@ -187,5 +189,12 @@ class FrontendThread extends Thread{
             e.printStackTrace();
             return "";
         }
+    }
+
+    public void update_registered() {
+        // Send registered clients
+        String register_info = "REGISTERED<|>";
+        register_info += msgHandler.getAccountInfo();
+        send_message(register_info);
     }
 }

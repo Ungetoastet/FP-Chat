@@ -24,9 +24,9 @@ socket.addEventListener("message", (event) => {
     const message_window = document.getElementById("window-chat");
     console.log(event.data);
 
-    let sender = event.data.split(" ")[0];
+    let sender = event.data.split("<|>")[0];
+    let status = event.data.split("<|>")[1];
     if (sender == "LOGIN") {
-        let status = event.data.split(" ")[1];
         if (status == "SUCCESS") {
             hide_login_window();
             typing_input.placeholder = "Schreiben als " + user_name + "..."
@@ -52,7 +52,7 @@ socket.addEventListener("message", (event) => {
     else {
         msg_html += 'recieved"><h3>' + sender + '</h3>';
     }
-    msg_html += event.data.split(' ').slice(1).join(' '); // Erstes Wort abschneiden
+    msg_html += status // Erstes Wort abschneiden
     msg_html += "</div>"
     message_window.innerHTML += msg_html;
 
@@ -78,7 +78,7 @@ socket.addEventListener("error", (event) => {
 function send_message() {
     const message_window = document.getElementById("window-chat");
     let text = typing_input.value;
-    socket.send(user_name + " " + text);
+    socket.send(user_name + "<|>" + text);
     typing_input.value = "";
     message_window.innerHTML += '<div class="message" id="sent">' + text + '<\div>';
     message_window.scrollTop = message_window.scrollHeight;
