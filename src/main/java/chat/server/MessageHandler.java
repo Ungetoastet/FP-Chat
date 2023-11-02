@@ -1,5 +1,6 @@
 package chat.server;
 
+import java.io.*;
 import java.util.LinkedList;
 
 class MessageHandler extends Thread {
@@ -7,16 +8,22 @@ class MessageHandler extends Thread {
     LinkedList<ServerThread> client_threads;
     LinkedList<Account> registered_users;
 
+    private final String accounts_filename = "registered_accounts.acc";
+
+
     MessageHandler() {
         this.client_threads = new LinkedList<>();
-        this.registered_users = new LinkedList<>();
-        this.registered_users.add(new Account("robert", "scheer"));
-        this.registered_users.add(new Account("lucie", "wolf"));
+        this.registered_users = loadAccounts();
     }
 
     public void register_account(Account account) {
         this.registered_users.add(account);
         serverfrontend.update_registered();
+        saveAccounts();
+    }
+    public void delete_account(Account account) {
+        this.registered_users.remove(account);
+        saveAccounts();
     }
 
     public void register_client(ServerThread client) {
@@ -26,6 +33,7 @@ class MessageHandler extends Thread {
     public void deregister_client(ServerThread client) {
         this.client_threads.remove(client);
     }
+
 
     public void register_frontend(FrontendThread newsfe) {
         this.serverfrontend = newsfe;
@@ -90,7 +98,28 @@ class MessageHandler extends Thread {
         return s.toString();
     }
 
-    public void server_frontend_update_connected() {
-        serverfrontend.update_connected();
+    private void saveAccounts() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(this.accounts_filename))) {
+            out.writeObject(this.registered_users);
+        }
+        catch (Exception e) {
+            System.out.println("Error when saving accounts:\n");
+            e.printStackTrace();
+        }
+    }
+
+    public LinkedList<Account> loadAccounts() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(this.accounts_filename))) {
+            return (LinkedList<Account>) in.readObject();
+        }
+        catch (FileNotFoundException notFoundException) {
+            System.out.println("Warning: Couldnt find Account safe data, creating new...");
+            return new LinkedList<Account>();
+        }
+        catch (Exception e){
+            System.out.println("Error in Account loading:\n");
+            e.printStackTrace();
+            return new LinkedList<Account>();
+        }
     }
 }

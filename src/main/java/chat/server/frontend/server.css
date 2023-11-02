@@ -36,13 +36,18 @@ div#main-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 5px;
 }
 .namelist .nameline div {
     text-align: left;
 }
 .namelist .nameline button {
     text-align: right;
+    margin: 2px;
+    padding: 10px;
+    font-weight: normal;
 }
+
 
 
 

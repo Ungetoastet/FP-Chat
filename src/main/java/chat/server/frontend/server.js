@@ -77,26 +77,42 @@ function update_registered(data) {
 
     for (let i = 0; i < names.length-1; i++) {
         let addhtml = '<div class="nameline"><div>';
+        // Add name
         addhtml += names[i].replace("/!!/", "");
+        addhtml += "</div><div>";
+
+
+        // Build block button
         if (!names[i].includes("/!!/")) { // User blocked flag
-            addhtml += '</div><button onclick="banUser(\'';
+            addhtml += '<button onclick="banUser(\'';
         }
         else {
-            addhtml += '</div><button onclick="unbanUser(\'';
+            addhtml += '<button onclick="unbanUser(\'';
         }
         addhtml += names[i].replace("/!!/", "");
         if (!names[i].includes("/!!/")) { // User blocked flag
-            addhtml += '\')" class="secondary">Ban</button></div>';
+            addhtml += '\')" class="secondary">Ban</button>';
         }
         else {
-            addhtml += '\')" class="secondary">Unban</button></div>';
+            addhtml += '\')" class="secondary">Unban</button>';
         }
+
+        // Build delete Button
+        addhtml += '<button style="color:red" onclick="deleteUser(\'';
+        addhtml += names[i].replace("/!!/", "");
+        addhtml += '\')" class="secondary">Delete</button>';
+
+        addhtml += '</div></div>';
         window.innerHTML += addhtml;
     }
 }
 
 function banUser(name) {
     socket.send("CONTROL<|>BAN " + name);
+}
+
+function deleteUser(name) {
+    socket.send("CONTROL<|>DELETE " + name);
 }
 
 function unbanUser(name) {

@@ -72,6 +72,14 @@ class ServerManager extends Thread {
                 frontendThread.update_registered();
                 break;
 
+            case "DELETE":
+                if (!deleteUser(args[1])) {
+                    System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
+                }
+                frontendThread.update_connected();
+                frontendThread.update_registered();
+                break;
+
             case "RENAME":
                 if (!rename(args[1], args[2])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
@@ -107,6 +115,16 @@ class ServerManager extends Thread {
             }
         }
         return false;
+    }
+
+    boolean deleteUser(String name) {
+        Account target = find_account_by_name(name);
+        if (target == null) {
+            return false;
+        }
+        kickUser(name);
+        msgHandler.delete_account(target);
+        return true;
     }
 
     boolean banUser(String name) {

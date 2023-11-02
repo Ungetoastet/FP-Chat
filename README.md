@@ -10,6 +10,10 @@ Einer kann was, die andere malt.
 - Login / Registration for users
 
 # ToDo
+## Known issues
+- Clients werden nach dem Trennen immer noch angezeigt, sind also noch registriert
+- Falls das ServerFrontend geschlossen wird, soll der Server runtergefahren werden
+
 ## Meilenstein 1
 ### Server
 - ✅ starten und beenden des ServerSockets
@@ -29,13 +33,14 @@ Einer kann was, die andere malt.
 
 ## Meilenstein 2
 ### Server
-- Implementierung als grafische Benutzerschnittstelle (siehe Anhang 1)
+- ✅ Implementierung als grafische Benutzerschnittstelle (siehe Anhang 1)
 - Realisierung einer visuellen Anzeige, einschließlich dynamischer Aktualisierung von folgenden Elementen: (siehe Anhang 1, Anhang 2 und Anhang 3)
 - Anzeige der Namen aller vorhandenen Räume
 - Anzeige der Namen aller angemeldeten Benutzer sowie der Angabe des Namens von dem Raum, in dem sich der Benutzer aktuell befindet
-- Gestaltung einer Kommunikationsoberfläche zur Visualisierung aller Aktivitäten nach dem Starten des Servers bis zum Beenden im Bezug auf Verbindung, Kommunikation und Verwaltung – außerdem sollen diese Ereignisse in einer Datei protokolliert werden (siehe Anhang 1)
+- ✅ Gestaltung einer Kommunikationsoberfläche zur Visualisierung aller Aktivitäten nach dem Starten des Servers bis zum Beenden im Bezug auf Verbindung, Kommunikation und Verwaltung 
+- außerdem sollen diese Ereignisse in einer Datei protokolliert werden (siehe Anhang 1)
 - Weiterentwicklung des Einraum-Systems zu einem Mehrraum-System
-- Optimierung der Benutzerkontenverwaltung durch eine dauerhafte Speicherung der Daten auf der Festplatte und der Möglichkeit, diese Datensätze anzuzeigen
+- ✅ Optimierung der Benutzerkontenverwaltung durch eine dauerhafte Speicherung der Daten auf der Festplatte und der Möglichkeit, diese Datensätze anzuzeigen
 - Bereitstellung von Methoden zur Verwaltung von Räumen, wobei folgende Funktion- alitäten bereitgestellt werden müssen: (siehe Anhang 4)
 - Erstellen von Räumen
 - Editieren von Räumen

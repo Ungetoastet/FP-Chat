@@ -1,6 +1,8 @@
 package chat.server;
 
-class Account {
+import java.io.Serializable;
+
+class Account implements Serializable {
     boolean allowed = true;
     String name;
     String password;
