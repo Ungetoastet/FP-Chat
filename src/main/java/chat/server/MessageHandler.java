@@ -73,7 +73,7 @@ class MessageHandler extends Thread {
         StringBuilder s = new StringBuilder();
         for (Account acc : registered_users) {
             if (!acc.allowed) {
-                s.append("/");
+                s.append("/!!/");  // Add signs if user is banned
             }
             s.append(acc.name).append("|");
         }

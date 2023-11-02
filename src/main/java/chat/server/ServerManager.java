@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 class ServerManager extends Thread {
     MessageHandler msgHandler;
+    FrontendThread frontendThread;
+
     String helpString = "\nServer terminal help: \n"
             + "EXIT                        Stops the server \n"
             + "KICK <name>                 Kicks the user\n"
@@ -17,6 +19,10 @@ class ServerManager extends Thread {
 
     ServerManager(MessageHandler msgHandler) {
         this.msgHandler = msgHandler;
+    }
+
+    public void connectFrontend(FrontendThread frontendThread) {
+        this.frontendThread = frontendThread;
     }
 
     @Override
@@ -41,12 +47,14 @@ class ServerManager extends Thread {
             case "REGISTER":
                 msgHandler.registered_users.add(
                         new Account(args[1], args[2]));
+                frontendThread.update_registered();
                 break;
 
             case "BAN":
                 if (!banUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
+                frontendThread.update_registered();
                 break;
 
             case "KICK":
@@ -59,12 +67,14 @@ class ServerManager extends Thread {
                 if (!unbanUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
+                frontendThread.update_registered();
                 break;
 
             case "RENAME":
                 if (!rename(args[1], args[2])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
+                frontendThread.update_registered();
                 break;
 
             case "SETPASS":
@@ -74,7 +84,7 @@ class ServerManager extends Thread {
                 break;
 
             case "SAY":
-                msgHandler.push_message(null, "SERVER " + input.split(" ", 2)[1]);
+                msgHandler.push_message(null, "SERVER<|>" + input.split(" ", 2)[1]);
                 break;
 
             case "HELP":
@@ -90,7 +100,7 @@ class ServerManager extends Thread {
         for (ServerThread client : msgHandler.client_threads) {
             if (client.account.name.equals(name)) {
                 client.disconnect();
-                msgHandler.push_message(null, "SERVER Kicked " + name);
+                msgHandler.push_message(null, "SERVER<|>Kicked " + name);
                 return true;
             }
         }
@@ -108,7 +118,7 @@ class ServerManager extends Thread {
         // ... and terminate the connection (if there is one)
         kickUser(name);
 
-        msgHandler.push_message(null, "SERVER Banned " + name);
+        msgHandler.push_message(null, "SERVER<|>Banned " + name);
         return true;
     }
 
@@ -119,7 +129,7 @@ class ServerManager extends Thread {
             return false;
         }
         target.unban();
-        msgHandler.push_message(null, "SERVER Unbanned " + name);
+        msgHandler.push_message(null, "SERVER<|>Unbanned " + name);
         return true;
     }
 

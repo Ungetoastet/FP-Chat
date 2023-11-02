@@ -28,6 +28,7 @@ class FrontendThread extends Thread{
             throw new RuntimeException(e);
         }
         this.manager = serverManager;
+        manager.connectFrontend(this);
     }
 
     @Override
@@ -67,8 +68,8 @@ class FrontendThread extends Thread{
         while (!socket.isClosed()) {
             System.out.println("Waiting for data...");
             String msg = wait_for_message();
-            if (Objects.equals(msg.split("\\|")[0], "CONTROL")) {
-                manager.process_command(msg.split("\\|", 2)[1]);
+            if (Objects.equals(msg.split("<\\|>")[0], "CONTROL")) {
+                manager.process_command(msg.split("<\\|>", 2)[1]);
                 continue;
             }
             msgHandler.push_message(null, msg);

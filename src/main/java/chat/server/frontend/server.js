@@ -18,12 +18,12 @@ socket.addEventListener('open', (event) => {
 socket.addEventListener('message', (event) => {
     console.log('Message: ', event.data);
     const message_window = document.getElementById("window-chat");
-    console.log(event.data);
 
     const sender = event.data.split("<|>")[0];
 
     if (sender == "REGISTERED") {
-        // Update registered
+        console.log(event.data.split("<|>")[1]);
+        update_registered(event.data.split("<|>")[1]);
         return;
     }
 
@@ -64,5 +64,40 @@ function send_message() {
 }
 
 function stop_server() {
-    socket.send("CONTROL|EXIT");
+    socket.send("CONTROL<|>EXIT");
+}
+
+function update_registered(data) {
+    const window = document.getElementById("registeredList");
+    window.innerHTML = "";
+    let names = data.split("|");
+
+    let target = '<div class="nameline"><div>Name</div><button onclick="banUser("name")" class="secondary">Ban</button></div>';
+    console.log(names);
+    for (let i = 0; i < names.length-1; i++) {
+        let addhtml = '<div class="nameline"><div>';
+        addhtml += names[i].replace("/!!/", "");
+        if (!names[i].includes("/!!/")) { // User blocked flag
+            addhtml += '</div><button onclick="banUser(\'';
+        }
+        else {
+            addhtml += '</div><button onclick="unbanUser(\'';
+        }
+        addhtml += names[i].replace("/!!/", "");
+        if (!names[i].includes("/!!/")) { // User blocked flag
+            addhtml += '\')" class="secondary">Ban</button></div>';
+        }
+        else {
+            addhtml += '\')" class="secondary">Unban</button></div>';
+        }
+        window.innerHTML += addhtml;
+    }
+}
+
+function banUser(name) {
+    socket.send("CONTROL<|>BAN " + name);
+}
+
+function unbanUser(name) {
+    socket.send("CONTROL<|>UNBAN " + name);
 }

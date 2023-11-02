@@ -53,7 +53,7 @@ public class main {
     }
 
     public static void stop_server() {
-        msgHandler.push_message(null, "SERVER Server wurde runtergefahren");
+        msgHandler.push_message(null, "SERVER<|>Server wurde runtergefahren");
         for (ServerThread client : msgHandler.getClientThreads()) {
             client.disconnect();
         }

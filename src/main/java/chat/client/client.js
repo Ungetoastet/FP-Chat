@@ -112,8 +112,10 @@ function register() {
     if (name.value.length + pw.value.length < 7) {
         alert("Name und Passwort müssen jeweils mindestens 3 Zeichen lang sein.")
     }
-    if (name.value.includes("<|>") || pw.value.includes("<|>")) {
-        alert("<|> is not allowed.");
+    if (name.value.includes("<|>") || name.value.includes("/!!/") || pw.value.includes("<|>")) {
+        // <|> ist Trennzeichen für Protokoll
+        // /!!/ ist Markierung für gesperrte Accounts
+        alert("'<|>' or '/!!/' are not allowed in name or password.");
     }
     socket.send("REGISTER<|>" + name.value + "<|>" + pw.value);
     user_name = name.value;
