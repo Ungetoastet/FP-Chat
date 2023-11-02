@@ -22,8 +22,11 @@ socket.addEventListener('message', (event) => {
     const sender = event.data.split("<|>")[0];
 
     if (sender == "REGISTERED") {
-        console.log(event.data.split("<|>")[1]);
         update_registered(event.data.split("<|>")[1]);
+        return;
+    }
+    if (sender == "CONNECTED") {
+        update_connected(event.data.split("<|>")[1]);
         return;
     }
 
@@ -72,8 +75,6 @@ function update_registered(data) {
     window.innerHTML = "";
     let names = data.split("|");
 
-    let target = '<div class="nameline"><div>Name</div><button onclick="banUser("name")" class="secondary">Ban</button></div>';
-    console.log(names);
     for (let i = 0; i < names.length-1; i++) {
         let addhtml = '<div class="nameline"><div>';
         addhtml += names[i].replace("/!!/", "");
@@ -101,3 +102,23 @@ function banUser(name) {
 function unbanUser(name) {
     socket.send("CONTROL<|>UNBAN " + name);
 }
+
+function update_connected(data) {
+    const window = document.getElementById("connectedList");
+    window.innerHTML = "";
+    let names = data.split("|");
+
+    for (let i = 0; i < names.length-1; i++) {
+        let addhtml = '<div class="nameline"><div>';
+        addhtml += names[i];
+        addhtml += '</div><button onclick="kickUser(\'';
+        addhtml += names[i];
+        addhtml += '\')" class="secondary">Kick</button></div>';
+        window.innerHTML += addhtml;
+    }
+}
+
+function kickUser(name) {
+    socket.send("CONTROL<|>KICK " + name);
+}
+

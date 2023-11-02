@@ -83,17 +83,19 @@ class ServerThread extends Thread {
                 }
                 if (login[0].equals("REGISTER")) {
                     this.account = new Account(login[1], login[2]);
-                    msgHandler.register_acocunt(this.account);
+                    msgHandler.register_account(this.account);
                     msgHandler.push_message(this, "SERVER<|>" + account.name + " hat sich registriert");
                     logged_in = true;
                 }
             }
 
             send_message("LOGIN<|>SUCCESS");
+            msgHandler.register_client(this);
 
             String greeting = "SERVER<|>Du bist jetzt verbunden. Angemeldete Benutzer: ";
             greeting += msgHandler.getActiveAccountList();
             send_message(greeting);
+            msgHandler.serverfrontend.update_connected();
 
             // Message read loop
             while (!client.isClosed()) {

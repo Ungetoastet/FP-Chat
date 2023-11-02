@@ -198,4 +198,10 @@ class FrontendThread extends Thread{
         register_info += msgHandler.getAccountInfo();
         send_message(register_info);
     }
+
+    public void update_connected() {
+        String connected_info = "CONNECTED<|>";
+        connected_info += msgHandler.getConnectedInfo();
+        send_message(connected_info);
+    }
 }

@@ -41,7 +41,6 @@ public class main {
             while (accept_new_connections) {
                 ServerThread thread = new ServerThread(server.accept(), msgHandler);
                 thread.start();
-                msgHandler.register_client(thread);
             }
         }
         catch (SocketException e) {

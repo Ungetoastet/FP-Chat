@@ -55,12 +55,14 @@ class ServerManager extends Thread {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
                 frontendThread.update_registered();
+                frontendThread.update_connected();
                 break;
 
             case "KICK":
                 if (!kickUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
+                frontendThread.update_connected();
                 break;
 
             case "UNBAN":

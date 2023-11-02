@@ -14,7 +14,7 @@ class MessageHandler extends Thread {
         this.registered_users.add(new Account("lucie", "wolf"));
     }
 
-    public void register_acocunt(Account account) {
+    public void register_account(Account account) {
         this.registered_users.add(account);
         serverfrontend.update_registered();
     }
@@ -62,12 +62,17 @@ class MessageHandler extends Thread {
             return "";
         }
 
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (Account account : activeAccounts()) {
             if (account == null) { return ""; }
-            s += account.name + ", ";
+            s.append(account.name).append(", ");
         }
-        return s;
+        return s.toString();
+    }
+
+    public String getConnectedInfo() {
+        String connected = getActiveAccountList().replace(", ", "|");
+        return connected;
     }
 
     public LinkedList<ServerThread> getClientThreads() {
@@ -83,5 +88,9 @@ class MessageHandler extends Thread {
             s.append(acc.name).append("|");
         }
         return s.toString();
+    }
+
+    public void server_frontend_update_connected() {
+        serverfrontend.update_connected();
     }
 }
