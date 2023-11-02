@@ -14,6 +14,11 @@ class MessageHandler extends Thread {
         this.registered_users.add(new Account("lucie", "wolf"));
     }
 
+    public void register_acocunt(Account account) {
+        this.registered_users.add(account);
+        serverfrontend.update_registered();
+    }
+
     public void register_client(ServerThread client) {
         this.client_threads.add(client);
     }
