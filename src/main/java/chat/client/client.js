@@ -62,12 +62,8 @@ socket.addEventListener("message", (event) => {
 
 // Connection closed
 socket.addEventListener("close", (event) => {
-    if (event.wasClean) {
-        console.log("Connection closed cleanly, code=" + event.code + ", reason=" + event.reason);
-    } else {
-        console.error("Connection abruptly closed");
-    }
-    alert("No server connection.");
+    alert("No server connection. Retrying...");
+    window.location.reload();
 });
 
 // Connection error

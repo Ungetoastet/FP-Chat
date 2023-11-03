@@ -2,7 +2,12 @@ const socket = new WebSocket("ws://localhost:1871");
 const typing_input = document.getElementById("composer");
 const typing_button = document.getElementById("send");
 
-// Add an event listener to the input field for the "keydown" event
+window.addEventListener('beforeunload', function(event) {
+    alert("Schließen des Frontends fährt den server runter.");
+    stop_server();
+    socket.close();
+});
+
 typing_input.addEventListener("keydown", function(event) {
     // Check if the pressed key is the Enter key (keycode 13)
     if (event.keyCode == 13) {
@@ -49,11 +54,9 @@ socket.addEventListener('message', (event) => {
 });
 
 socket.addEventListener('close', (event) => {
-    if (event.wasClean) {
-        console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
-    } else {
-        console.error(`Connection died`);
-    }
+    alert("Server wurde herruntergefahren. Dieses Fenster schließt sich jetzt.");
+    window.location.href = "about:blank";
+    window.close();
 });
 
 socket.addEventListener('error', (error) => {
