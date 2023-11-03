@@ -1,5 +1,6 @@
 package chat.server;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 class ServerManager extends Thread {
@@ -29,7 +30,6 @@ class ServerManager extends Thread {
     public void run() {
         System.out.println("Server Manager started");
         while (!main.server.isClosed()) {
-            System.out.print("[SERVER] << ");
             String input = readString();
             process_command(input);
         }
@@ -39,8 +39,16 @@ class ServerManager extends Thread {
         String cmd = input.split(" ")[0].toUpperCase();
         String[] args = input.split(" ");
         switch (cmd) {
+            case "":
+                break;
             case "EXIT":
                 System.out.println("[SERVER] >> Stopping server");
+                try {
+                    frontendThread.socket.close();
+                } catch (IOException e) {
+                    System.out.println("Error in Server Manager - Frontend shutdown:\n");
+                    e.printStackTrace();
+                }
                 main.stop_server();
                 break;
 

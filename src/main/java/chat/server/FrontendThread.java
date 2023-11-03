@@ -66,7 +66,6 @@ class FrontendThread extends Thread{
 
         // Message read loop
         while (!socket.isClosed()) {
-            System.out.println("Waiting for data...");
             String msg = wait_for_message();
             if (Objects.equals(msg.split("<\\|>")[0], "CONTROL")) {
                 manager.process_command(msg.split("<\\|>", 2)[1]);
@@ -75,8 +74,7 @@ class FrontendThread extends Thread{
             msgHandler.push_message(null, msg);
             System.out.println("Recieved message: " + msg);
         }
-
-        System.out.println("Server frontend handshake successful!");
+        System.out.println("Frontend shutdown.");
     }
 
     public void send_message(String message) {
