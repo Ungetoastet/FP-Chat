@@ -11,7 +11,7 @@ Einer kann was, die andere malt.
 
 # ToDo
 ## Known issues
-- Clients werden nach dem Trennen immer noch angezeigt, sind also noch registriert
+Keine :)
 
 ## Nice to have
 - Zeitstempel für Nachrichten

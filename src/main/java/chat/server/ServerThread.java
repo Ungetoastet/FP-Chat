@@ -101,12 +101,18 @@ class ServerThread extends Thread {
             while (!client.isClosed()) {
                 System.out.println("Waiting for data...");
                 String msg = wait_for_message();
+                if (msg.equals("CLOSE")) {
+                    msgHandler.deregister_client(this);
+                    msgHandler.push_message(this, "SERVER<|>" + account.name + " ist gegangen");
+                    msgHandler.serverfrontend.update_connected();
+                    client.close();
+                    break;
+                }
                 msgHandler.push_message(this, msg);
                 System.out.println("Recieved message: " + msg);
             }
 
             s.close();
-            client.close();
         } catch (IOException e) {
             System.out.println("Error in server - IO setup:\n" + e);
         } catch (NoSuchAlgorithmException e) {

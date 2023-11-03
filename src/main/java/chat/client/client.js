@@ -13,6 +13,9 @@ typing_input.addEventListener("keydown", function(event) {
     }
 });
 
+window.addEventListener('beforeunload', function(event) {
+    socket.send("CLOSE");
+});
 
 // Connection opened
 socket.addEventListener("open", (event) => {
