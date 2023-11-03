@@ -14,6 +14,10 @@ Einer kann was, die andere malt.
 - Clients werden nach dem Trennen immer noch angezeigt, sind also noch registriert
 - Falls das ServerFrontend geschlossen wird, soll der Server runtergefahren werden
 
+## Nice to have
+- Zeitstempel für Nachrichten
+- Laden des Chatverlaufs beim Betreten eines Raums
+
 ## Meilenstein 1
 ### Server
 - ✅ starten und beenden des ServerSockets
