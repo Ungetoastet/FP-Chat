@@ -1,9 +1,9 @@
 :root {
     /* Paletten generator: https://coolors.co/ff6781-121417-ccf5ac-717568-297373 */
 
-    --background: #211C1E;
-    --main: #8CE3DA;
-    --accent: #E9CBC4;
+    --background: #E8EAFF;
+    --main: #8287C0;
+    --accent: #644DA8;
     --soft: #61618d;
 }
 
@@ -32,7 +32,7 @@ div#chat-container {
 }
 
 div#window-chat {
-    border: 1px solid var(--main);
+    border: 5px solid var(--main);
     border-radius: 10px;
     height: 50vh;
     margin: 40px 10px 10px 10px;

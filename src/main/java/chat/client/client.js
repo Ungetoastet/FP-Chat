@@ -106,16 +106,23 @@ function register() {
     if (pwc.value != pw.value) {
         alert("Passwörter stimmen nicht überein!");
         pwc.value = "";
+        return;
     }
     let name = document.getElementById("name");
     if (name.value.length + pw.value.length < 7) {
         alert("Name und Passwort müssen jeweils mindestens 3 Zeichen lang sein.")
+        return;
     }
     if (name.value.includes("|") || name.value.includes(",") || name.value.includes("/!!/") || pw.value.includes("<|>")) {
         // <|> ist Trennzeichen für Protokoll
         // /!!/ ist Markierung für gesperrte Accounts
         // , Frontend Trennzeichen für verbundene Clients
-        alert("'|', '/!!/' and ',' are not allowed in name or password.");
+        alert("'|', '/!!/' und ',' sind nicht im name oder im Passwort erlaubt.");
+        return;
+    }
+    if(name.value == "SERVER" || name.value == "LOGIN" || name.value == "REGISTER" || name.value == "COMMAND"){
+        alert("Name ist reserviert und kann nicht verwendet werden.")
+        return;
     }
     socket.send("REGISTER<|>" + name.value + "<|>" + pw.value);
     user_name = name.value;

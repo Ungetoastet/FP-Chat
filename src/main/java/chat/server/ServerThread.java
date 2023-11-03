@@ -82,6 +82,7 @@ class ServerThread extends Thread {
                     }
                 }
                 if (login[0].equals("REGISTER")) {
+
                     this.account = new Account(login[1], login[2]);
                     msgHandler.register_account(this.account);
                     msgHandler.push_message(this, "SERVER<|>" + account.name + " hat sich registriert");
