@@ -44,7 +44,7 @@ public class main {
             }
         }
         catch (SocketException e) {
-            System.out.println("Server shut down.");
+            System.out.println("Server shut down. Press Enter to continue...");
         }
         catch (IOException e) {
             System.out.println("Error in server - setup:\n" + e);
