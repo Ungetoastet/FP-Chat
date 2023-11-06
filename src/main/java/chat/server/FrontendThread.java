@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,15 +34,13 @@ class FrontendThread extends Thread{
 
     @Override
     public void run() {
-
+        Logger logger = Logger.getLogger("mainLogger");
         // Handshake for websocket upgrade
         try {
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
 
             // Setup streams and scanners
-            System.out.println("Server frontend connected!");
-
             Scanner s = new Scanner(in, StandardCharsets.UTF_8);
             String data = s.useDelimiter("\\r\\n\\r\\n").next();
             Matcher get = Pattern.compile("^GET").matcher(data);
@@ -58,6 +57,7 @@ class FrontendThread extends Thread{
             }
         }
         catch (Exception e) {
+            logger.severe("Error in frontend handshake!");
             System.out.println("Error in frontend handshake:\n");
             e.printStackTrace();
         }
@@ -69,12 +69,13 @@ class FrontendThread extends Thread{
             String msg = wait_for_message();
             if (Objects.equals(msg.split("<\\|>")[0], "CONTROL")) {
                 manager.process_command(msg.split("<\\|>", 2)[1]);
+                logger.info("Recieved frontend command: " + msg);
                 continue;
             }
+            logger.info("Recieved frontend message: " + msg);
             msgHandler.push_message(null, msg);
-            System.out.println("Recieved message: " + msg);
         }
-        System.out.println("Frontend shutdown.");
+        logger.info("Frontend shutdown.");
     }
 
     public void send_message(String message) {

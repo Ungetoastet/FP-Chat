@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Scanner;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,10 +20,12 @@ class ServerThread extends Thread {
     InputStream in;
     OutputStream out;
     Account account;
+    Logger logger;
 
     ServerThread(Socket client, MessageHandler msgHandler) {
         this.client = client;
         this.msgHandler = msgHandler;
+        this.logger = Logger.getLogger("mainLogger");
     }
 
     public Account getAccount() {
@@ -33,7 +36,7 @@ class ServerThread extends Thread {
     public void run() {
         try {
             // Setup streams and scanners
-            System.out.println("Client connected!");
+            logger.info("Client connected from " + client.getInetAddress());
 
             this.in = client.getInputStream();
             this.out = client.getOutputStream();
@@ -57,7 +60,7 @@ class ServerThread extends Thread {
                 out.write(response, 0, response.length);
             }
 
-            System.out.println("Handshake successful!");
+            logger.info("Successful handshake from " + client.getInetAddress());
 
             // Login user
             boolean logged_in = false;
@@ -100,7 +103,6 @@ class ServerThread extends Thread {
 
             // Message read loop
             while (!client.isClosed()) {
-                System.out.println("Waiting for data...");
                 String msg = wait_for_message();
                 if (msg.equals("CLOSE")) {
                     msgHandler.deregister_client(this);
@@ -110,7 +112,6 @@ class ServerThread extends Thread {
                     break;
                 }
                 msgHandler.push_message(this, msg);
-                System.out.println("Recieved message: " + msg);
             }
 
             s.close();

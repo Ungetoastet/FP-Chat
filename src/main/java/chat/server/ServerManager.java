@@ -2,10 +2,12 @@ package chat.server;
 
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 class ServerManager extends Thread {
     MessageHandler msgHandler;
     FrontendThread frontendThread;
+    Logger logger;
 
     String helpString = "\nServer terminal help: \n"
             + "EXIT                        Stops the server \n"
@@ -20,6 +22,7 @@ class ServerManager extends Thread {
 
     ServerManager(MessageHandler msgHandler) {
         this.msgHandler = msgHandler;
+        this.logger = Logger.getLogger("mainLogger");
     }
 
     public void connectFrontend(FrontendThread frontendThread) {
@@ -28,8 +31,9 @@ class ServerManager extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Server Manager started");
+        logger.info("Server manager started");
         while (!main.server.isClosed()) {
+            System.out.print("[SERVER] << ");
             String input = readString();
             process_command(input);
         }
@@ -119,6 +123,7 @@ class ServerManager extends Thread {
             if (client.account.name.equals(name)) {
                 client.disconnect();
                 msgHandler.push_message(null, "SERVER<|>Kicked " + name);
+                logger.info("Kicked user " + name);
                 return true;
             }
         }
@@ -166,6 +171,7 @@ class ServerManager extends Thread {
         if (target == null) {
             return false;
         }
+        logger.info("Renamed user " + name + " to " + newname);
         target.name = newname;
         return true;
     }
@@ -175,6 +181,7 @@ class ServerManager extends Thread {
         if (target == null) {
             return false;
         }
+        logger.info("Changed password of user " + name);
         target.password = newpass;
         return true;
     }
