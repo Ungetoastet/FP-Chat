@@ -25,3 +25,4 @@ replay_pid*
 .vscode/settings.json
 FP-Chat.iml
 .idea/inspectionProfiles/Project_Default.xml
+*.acc
