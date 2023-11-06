@@ -41,7 +41,7 @@ Keine :)
 - Anzeige der Namen aller vorhandenen Räume
 - Anzeige der Namen aller angemeldeten Benutzer sowie der Angabe des Namens von dem Raum, in dem sich der Benutzer aktuell befindet
 - ✅ Gestaltung einer Kommunikationsoberfläche zur Visualisierung aller Aktivitäten nach dem Starten des Servers bis zum Beenden im Bezug auf Verbindung, Kommunikation und Verwaltung 
-- außerdem sollen diese Ereignisse in einer Datei protokolliert werden (siehe Anhang 1)
+- ✅ außerdem sollen diese Ereignisse in einer Datei protokolliert werden (siehe Anhang 1)
 - Weiterentwicklung des Einraum-Systems zu einem Mehrraum-System
 - ✅ Optimierung der Benutzerkontenverwaltung durch eine dauerhafte Speicherung der Daten auf der Festplatte und der Möglichkeit, diese Datensätze anzuzeigen
 - Bereitstellung von Methoden zur Verwaltung von Räumen, wobei folgende Funktion- alitäten bereitgestellt werden müssen: (siehe Anhang 4)
