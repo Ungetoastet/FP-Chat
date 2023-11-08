@@ -266,7 +266,7 @@ class ServerThread extends Thread {
     }
 
     private void greeting() {
-        String accts = activeMsgHandler.getActiveAccountList();
+        String accts = activeMsgHandler.getActiveAccountList(this.account.name);
         String greeting = "SERVER<|>Du bist jetzt verbunden. ";
         if (accts.equals("")) {
              greeting += "Außer dir ist noch keiner hier!";
@@ -276,5 +276,10 @@ class ServerThread extends Thread {
             greeting += accts;
         }
         send_message(greeting);
+        update_connected_info();
+    }
+
+    public void update_connected_info() {
+        send_message("CONNECTED<|>" + activeMsgHandler.getActiveAccountData(this.account.name));
     }
 }

@@ -20,20 +20,32 @@ h1 {
 
 div#grid-container {
     display: grid;
-    grid-template-columns: 1fr 20%;
+    grid-template-columns: 75% 20%;
+    grid-template-rows: 30% 60%;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
 }
 
 div#chat-container {
+    grid-area: 1 / 1 / 3 / 2;
     display: grid;
     grid-template-rows: 1fr;
-    grid-area: 1 / 1 / 2 / 2;
     grid-column-gap: 10px;
     grid-row-gap: 10px;
 }
 
 div#room-container {
+    grid-area: 2 / 2 / 3 / 3;
+    padding: 10px;
+    border: 2px solid var(--main);
+    border-radius: 10px;
+}
+
+div#connected-container {
     grid-area: 1 / 2 / 2 / 3;
     padding: 10px;
+    border: 2px solid var(--main);
+    border-radius: 10px;
 }
 
 button.roomcard {

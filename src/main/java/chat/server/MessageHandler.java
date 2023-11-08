@@ -31,6 +31,7 @@ class MessageHandler extends Thread {
         roomManager.register_client(client);
         push_message(null, "SERVER<|>" + client.account.name + " ist beigetreten");
         logger.info(room_name + ": Client from " + client.client.getInetAddress() + " logged in with account: " + client.account.name);
+        update_client_connection_info();
     }
 
     public void deregister_client(ServerThread client) {
@@ -39,6 +40,7 @@ class MessageHandler extends Thread {
         push_message(null, "SERVER<|>" + client.account.name + " ist gegangen");
         roomManager.deregister_client(client);
         logger.info(room_name + ": Deregistered client from: " + client.client.getInetAddress());
+        update_client_connection_info();
     }
 
     public void push_message(ServerThread sender, String message) {
@@ -70,6 +72,10 @@ class MessageHandler extends Thread {
         return accounts;
     }
 
+    public String getActiveAccountData(String excludename) {
+        return getActiveAccountList(excludename).replace(", ", "|");
+    }
+
     public String getActiveAccountList() {
         return getActiveAccountList(null);
     }
@@ -97,5 +103,11 @@ class MessageHandler extends Thread {
 
     public int getUserCount() {
         return userCount;
+    }
+
+    public void update_client_connection_info() {
+        for (ServerThread cli : client_threads) {
+            cli.update_connected_info();
+        }
     }
 }

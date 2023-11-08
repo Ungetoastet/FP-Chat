@@ -34,8 +34,11 @@ socket.addEventListener("message", (event) => {
         update_rooms(status);
         return;
     }
-
-    if (sender == "LOGIN") {
+    else if (sender == "CONNECTED") {
+        update_connected(status);
+        return;
+    }
+    else if (sender == "LOGIN") {
         if (status == "SUCCESS") {
             hide_login_window();
             typing_input.placeholder = "Schreiben als " + user_name + "..."
@@ -142,7 +145,7 @@ function hide_login_window() {
 function update_rooms(roominfo) {
     const rooms = roominfo.split("|");
     const roomlist = document.getElementById("room-container");
-    let newhtml = "";
+    let newhtml = "<i>Offene Chats</i>";
     for (const i in rooms) {
         const roomname = rooms[i].split("/!!/")[0].split("@")[1];
         const roompop = rooms[i].split("/!!/")[0].split("@")[0];
@@ -164,4 +167,21 @@ function switch_to_room(room_name) {
     const message_window = document.getElementById("window-chat");
     message_window.innerHTML = "";
     socket.send("SWITCHROOM<|>" + room_name);
+}
+
+function update_connected(connectedinfo) {
+    const roomlist = document.getElementById("connected-container");
+    let newhtml;
+    if (connectedinfo.length > 0) {
+        newhtml = "<i>Verbundene Nutzer</i>";
+        const users = connectedinfo.split("|");
+        for (const i in users) {
+            const username = users[i];
+            newhtml += '<div>' + username + '</div>';
+        }
+    }
+    else {
+        newhtml = "<i>Noch ist keiner hier...</i>"
+    }
+    roomlist.innerHTML = newhtml;
 }
