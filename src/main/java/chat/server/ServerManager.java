@@ -5,7 +5,8 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 class ServerManager extends Thread {
-    MessageHandler msgHandler;
+    MessageHandler mainMsgHandler;
+    RoomManager roomManager;
     FrontendThread frontendThread;
     Logger logger;
 
@@ -20,8 +21,8 @@ class ServerManager extends Thread {
             + "SAY <text>                  Sends a message to all clients\n"
             + "HELP                        Show this page\n";
 
-    ServerManager(MessageHandler msgHandler) {
-        this.msgHandler = msgHandler;
+    ServerManager(RoomManager rm) {
+        this.roomManager = rm;
         this.logger = Logger.getLogger("mainLogger");
     }
 
@@ -31,6 +32,7 @@ class ServerManager extends Thread {
 
     @Override
     public void run() {
+        this.mainMsgHandler = roomManager.rooms.get(0);
         logger.info("Server manager started");
         while (!main.server.isClosed()) {
             System.out.print("[SERVER] << ");
@@ -57,12 +59,14 @@ class ServerManager extends Thread {
                 break;
 
             case "REGISTER":
-                msgHandler.registered_users.add(
+                args = input.split(" ", 3);
+                roomManager.registered_users.add(
                         new Account(args[1], args[2]));
                 frontendThread.update_registered();
                 break;
 
             case "BAN":
+                args = input.split(" ", 2);
                 if (!banUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
@@ -71,6 +75,7 @@ class ServerManager extends Thread {
                 break;
 
             case "KICK":
+                args = input.split(" ", 2);
                 if (!kickUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
@@ -78,6 +83,7 @@ class ServerManager extends Thread {
                 break;
 
             case "UNBAN":
+                args = input.split(" ", 2);
                 if (!unbanUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
@@ -85,6 +91,7 @@ class ServerManager extends Thread {
                 break;
 
             case "DELETE":
+                args = input.split(" ", 2);
                 if (!deleteUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
@@ -105,8 +112,20 @@ class ServerManager extends Thread {
                 }
                 break;
 
+            case "CREATEROOM":
+                roomManager.newRoom(args[1]);
+                frontendThread.update_rooms();
+                roomManager.update_client_room_list();
+                break;
+
+            case "DELETEROOM":
+                roomManager.deleteRoom(args[1]);
+                frontendThread.update_rooms();
+                roomManager.update_client_room_list();
+                break;
+
             case "SAY":
-                msgHandler.push_message(null, "SERVER<|>" + input.split(" ", 2)[1]);
+                mainMsgHandler.push_message(null, "SERVER<|>" + input.split(" ", 2)[1]);
                 break;
 
             case "HELP":
@@ -119,10 +138,10 @@ class ServerManager extends Thread {
     }
 
     boolean kickUser(String name) {
-        for (ServerThread client : msgHandler.client_threads) {
+        for (ServerThread client : roomManager.connected_clients) {
             if (client.account.name.equals(name)) {
+                client.activeMsgHandler.push_message(null, "SERVER<|>Kicked " + name);
                 client.disconnect();
-                msgHandler.push_message(null, "SERVER<|>Kicked " + name);
                 logger.info("Kicked user " + name);
                 return true;
             }
@@ -136,7 +155,7 @@ class ServerManager extends Thread {
             return false;
         }
         kickUser(name);
-        msgHandler.delete_account(target);
+        roomManager.delete_account(target);
         return true;
     }
 
@@ -151,7 +170,7 @@ class ServerManager extends Thread {
         // ... and terminate the connection (if there is one)
         kickUser(name);
 
-        msgHandler.push_message(null, "SERVER<|>Banned " + name);
+        mainMsgHandler.push_message(null, "SERVER<|>Banned " + name);
         return true;
     }
 
@@ -162,7 +181,7 @@ class ServerManager extends Thread {
             return false;
         }
         target.unban();
-        msgHandler.push_message(null, "SERVER<|>Unbanned " + name);
+        mainMsgHandler.push_message(null, "SERVER<|>Unbanned " + name);
         return true;
     }
 
@@ -187,7 +206,7 @@ class ServerManager extends Thread {
     }
 
     Account find_account_by_name(String name) {
-        for (Account account : msgHandler.registered_users) {
+        for (Account account : roomManager.registered_users) {
             if (account.name.equals(name)) {
                 return account;
             }

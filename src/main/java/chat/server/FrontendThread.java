@@ -16,13 +16,14 @@ import java.util.regex.Pattern;
 
 class FrontendThread extends Thread{
     Socket socket;
-    MessageHandler msgHandler;
+    MessageHandler mainMsgHandler;
+    RoomManager roomManager;
     OutputStream out;
     ServerManager manager;
 
-    FrontendThread(Socket socket, MessageHandler msgHandler, ServerManager serverManager) {
+    FrontendThread(Socket socket, RoomManager rm, ServerManager serverManager) {
         this.socket = socket;
-        this.msgHandler = msgHandler;
+        this.roomManager = rm;
         try {
             this.out = socket.getOutputStream();
         } catch (IOException e) {
@@ -34,6 +35,7 @@ class FrontendThread extends Thread{
 
     @Override
     public void run() {
+        this.mainMsgHandler = roomManager.rooms.get(0);
         Logger logger = Logger.getLogger("mainLogger");
         // Handshake for websocket upgrade
         try {
@@ -63,6 +65,7 @@ class FrontendThread extends Thread{
         }
 
         update_registered();
+        update_rooms();
 
         // Message read loop
         while (!socket.isClosed()) {
@@ -73,7 +76,7 @@ class FrontendThread extends Thread{
                 continue;
             }
             logger.info("Recieved frontend message: " + msg);
-            msgHandler.push_message(null, msg);
+            mainMsgHandler.push_message(null, msg);
         }
         logger.info("Frontend shutdown.");
     }
@@ -110,12 +113,13 @@ class FrontendThread extends Thread{
         } catch (SocketException e) {
             try {
                 socket.close();
-                msgHandler.deregister_frontend();
+                roomManager.deregister_frontend();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
         } catch (IOException e) {
-            System.out.println("Error in server thread - send_message\n" + e.toString());
+            System.out.println("Error in server thread - send_message\n" + e);
+            Logger.getLogger("mainLogger").severe("Error in server frontend thread: " + e);
         }
     }
 
@@ -179,7 +183,7 @@ class FrontendThread extends Thread{
         } catch (SocketException e) {
             try {
                 socket.close();
-                msgHandler.deregister_frontend();
+                roomManager.deregister_frontend();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -194,13 +198,17 @@ class FrontendThread extends Thread{
     public void update_registered() {
         // Send registered clients
         String register_info = "REGISTERED<|>";
-        register_info += msgHandler.getAccountInfo();
+        register_info += roomManager.getAccountInfo();
         send_message(register_info);
     }
 
     public void update_connected() {
         String connected_info = "CONNECTED<|>";
-        connected_info += msgHandler.getConnectedInfo();
+        connected_info += roomManager.getConnectedInfo();
         send_message(connected_info);
+    }
+
+    public void update_rooms() {
+        send_message("ROOMS<|>" + roomManager.getRoomList());
     }
 }

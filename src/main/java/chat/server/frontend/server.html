@@ -17,7 +17,13 @@
                 <button class="main" id="send" onclick="send_message()">SEND</button>
             </div>
         </div>
-        <div class="window" id="rooms">Rooms</div>
+        <div class="window" id="rooms">
+            <i>Rooms</i><br>
+            <input id="newroomname" placeholder="New room...">
+            <button class="secondary" onclick="createroom()">Create</button><br><br>
+            <div class="namelist" id="roomList">
+            </div>
+        </div>
         <div class="window" id="registered">
             <i>Registered Accounts</i>
             <div class="namelist" id="registeredList">

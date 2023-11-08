@@ -16,15 +16,16 @@ import java.util.regex.Pattern;
 
 class ServerThread extends Thread {
     Socket client;
-    MessageHandler msgHandler;
+    MessageHandler activeMsgHandler;
+    RoomManager roomManager;
     InputStream in;
     OutputStream out;
     Account account;
     Logger logger;
 
-    ServerThread(Socket client, MessageHandler msgHandler) {
+    ServerThread(Socket client, RoomManager rm) {
         this.client = client;
-        this.msgHandler = msgHandler;
+        this.roomManager = rm;
         this.logger = Logger.getLogger("mainLogger");
     }
 
@@ -68,7 +69,7 @@ class ServerThread extends Thread {
                 String loginmsg = wait_for_message();
                 String[] login = loginmsg.split("<\\|>");
                 if (login[0].equals("LOGIN")) {
-                    for (Account account : msgHandler.registered_users) {
+                    for (Account account : roomManager.registered_users) {
                         if (account.name.equals(login[1]) && account.password.equals(login[2])) {
                             if (!account.allowed) {
                                 send_message("LOGIN<|>BANNED");
@@ -76,7 +77,7 @@ class ServerThread extends Thread {
                             }
                             this.account = account;
                             logged_in = true;
-                            msgHandler.push_message(this, "SERVER<|>" + account.name + " ist beigetreten");
+                            activeMsgHandler = roomManager.rooms.get(0);
                             break;
                         }
                     }
@@ -85,33 +86,29 @@ class ServerThread extends Thread {
                     }
                 }
                 if (login[0].equals("REGISTER")) {
-
                     this.account = new Account(login[1], login[2]);
-                    msgHandler.register_account(this.account);
-                    msgHandler.push_message(this, "SERVER<|>" + account.name + " hat sich registriert");
+                    roomManager.register_account(this.account);
+                    activeMsgHandler = roomManager.rooms.get(0);
+                    activeMsgHandler.push_message(this, "SERVER<|>" + account.name + " hat sich registriert");
                     logged_in = true;
                 }
             }
 
             send_message("LOGIN<|>SUCCESS");
-            msgHandler.register_client(this);
+            activeMsgHandler.register_client(this);
 
-            String greeting = "SERVER<|>Du bist jetzt verbunden. Angemeldete Benutzer: ";
-            greeting += msgHandler.getActiveAccountList();
-            send_message(greeting);
-            msgHandler.serverfrontend.update_connected();
+            activeMsgHandler.serverfrontend.update_connected();
+
+            update_rooms();
+            greeting();
 
             // Message read loop
             while (!client.isClosed()) {
                 String msg = wait_for_message();
-                if (msg.equals("CLOSE")) {
-                    msgHandler.deregister_client(this);
-                    msgHandler.push_message(this, "SERVER<|>" + account.name + " ist gegangen");
-                    msgHandler.serverfrontend.update_connected();
-                    client.close();
-                    break;
+                if (!process_message(msg)) {
+                    // push the message only if it wasnt a command
+                    activeMsgHandler.push_message(this, msg);
                 }
-                msgHandler.push_message(this, msg);
             }
 
             s.close();
@@ -144,7 +141,6 @@ class ServerThread extends Thread {
                 frame[2 + i] = (byte) ((payloadLength >> ((7 - i) * 8)) & 0xFF);
             }
         }
-
         // Copy payload data into frame
         System.arraycopy(messageBytes, 0, frame, 2, messageBytes.length);
 
@@ -154,7 +150,9 @@ class ServerThread extends Thread {
         } catch (SocketException e) {
             try {
                 client.close();
-                msgHandler.deregister_client(this);
+                if (activeMsgHandler != null) {
+                    activeMsgHandler.deregister_client(this);
+                }
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -218,7 +216,9 @@ class ServerThread extends Thread {
         } catch (SocketException e) {
             try {
                 client.close();
-                msgHandler.deregister_client(this);
+                if (activeMsgHandler != null) {
+                    activeMsgHandler.deregister_client(this);
+                }
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -232,9 +232,49 @@ class ServerThread extends Thread {
 
     public void disconnect() {
         try {
+            activeMsgHandler.deregister_client(this);
+            activeMsgHandler = null;
             client.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void update_rooms() {
+        send_message("ROOMS<|>" + roomManager.getRoomList(activeMsgHandler));
+    }
+
+    private boolean process_message(String message) throws IOException {
+        if (message.equals("CLOSE")) {
+            activeMsgHandler.deregister_client(this);
+            activeMsgHandler.serverfrontend.update_connected();
+            client.close();
+            return true;
+        }
+        if (message.split("<\\|>")[0].equals("SWITCHROOM")) {
+            String roomname = message.split("<\\|>")[1];
+            MessageHandler newroom = roomManager.get_room_by_name(roomname);
+            activeMsgHandler.deregister_client(this);
+            activeMsgHandler = newroom;
+            newroom.register_client(this);
+            greeting();
+            update_rooms();
+            roomManager.serverfrontend.update_connected();
+            return true;
+        }
+        return false;
+    }
+
+    private void greeting() {
+        String accts = activeMsgHandler.getActiveAccountList();
+        String greeting = "SERVER<|>Du bist jetzt verbunden. ";
+        if (accts.equals("")) {
+             greeting += "Außer dir ist noch keiner hier!";
+        }
+        else {
+            greeting += "Angemeldete Benutzer: ";
+            greeting += accts;
+        }
+        send_message(greeting);
     }
 }

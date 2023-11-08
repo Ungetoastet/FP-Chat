@@ -16,9 +16,14 @@
                 <div id="window-chat">
                 </div>
                 <div id="window-type">
-                    <input type="text" id="composer" placeholder="Hier tippen...">
+                    <input type="text" id="composer" placeholder="Hier tippen..." maxlength="100">
                     <button class="main" id="send" onclick="send_message()">SEND</button>
                 </div>
+            </div>
+            <div id="room-container">
+                <button class="roomcard" id="activeroom"><i>[5]</i> Room A </button>
+                <button class="roomcard"><i>[2]</i> Room B </button>
+                <button class="roomcard"><i>[3]</i> Room C</button>
             </div>
         </div>
 
@@ -31,7 +36,7 @@
                 <input id="pw" type="password" placeholder="Passwort"><br>
                 <input type="password" id="passconfirm" placeholder="Passwort wiederholen">
                 <div style="margin-top: 20px;">
-                    <button class="secondary"  style="margin: auto; width: 47%;" onclick="register()">Registrieren</button>
+                    <button class="secondary" style="margin: auto; width: 47%;" onclick="register()">Registrieren</button>
                     <button class="main" style="margin: auto; width: 47%;" onclick="login()">Login</button>
                 </div>
             </div>

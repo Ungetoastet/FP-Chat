@@ -29,6 +29,12 @@ socket.addEventListener("message", (event) => {
 
     let sender = event.data.split("<|>")[0];
     let status = event.data.split("<|>")[1];
+
+    if (sender == "ROOMS") {
+        update_rooms(status);
+        return;
+    }
+
     if (sender == "LOGIN") {
         if (status == "SUCCESS") {
             hide_login_window();
@@ -113,11 +119,12 @@ function register() {
         alert("Name und Passwort müssen jeweils mindestens 3 Zeichen lang sein.")
         return;
     }
-    if (name.value.includes("|") || name.value.includes(",") || name.value.includes("/!!/") || pw.value.includes("<|>")) {
+    if (name.value.includes("|") || name.value.includes(",") || name.value.includes("/!!/") || name.value.includes("@") || pw.value.includes("<|>")) {
         // <|> ist Trennzeichen für Protokoll
         // /!!/ ist Markierung für gesperrte Accounts
         // , Frontend Trennzeichen für verbundene Clients
-        alert("'|', '/!!/' und ',' sind nicht im name oder im Passwort erlaubt.");
+        // @ ist Bezeichnung für aktiven Raum
+        alert("'|', '/!!/', '@' und ',' sind nicht im name oder im Passwort erlaubt.");
         return;
     }
     if(name.value == "SERVER" || name.value == "LOGIN" || name.value == "REGISTER" || name.value == "COMMAND"){
@@ -130,4 +137,31 @@ function register() {
 
 function hide_login_window() {
     document.getElementById("login").style.display = "none";
+}
+
+function update_rooms(roominfo) {
+    const rooms = roominfo.split("|");
+    const roomlist = document.getElementById("room-container");
+    let newhtml = "";
+    for (const i in rooms) {
+        const roomname = rooms[i].split("/!!/")[0].split("@")[1];
+        const roompop = rooms[i].split("/!!/")[0].split("@")[0];
+        newhtml += '<button class="roomcard" '
+        if (rooms[i].includes("/!!/")) {
+            newhtml += 'id="activeroom" ';
+        }
+        newhtml += 'onclick="switch_to_room(\'';
+        newhtml += roomname;
+        newhtml += '\')"><i>[' + roompop + ']</i> ';
+        newhtml += roomname;
+        newhtml += '</button>'
+    }
+    roomlist.innerHTML = newhtml;
+}
+
+function switch_to_room(room_name) {
+    console.log("Switching to room " + room_name);
+    const message_window = document.getElementById("window-chat");
+    message_window.innerHTML = "";
+    socket.send("SWITCHROOM<|>" + room_name);
 }

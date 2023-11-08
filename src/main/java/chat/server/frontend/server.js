@@ -30,8 +30,12 @@ socket.addEventListener('message', (event) => {
         update_registered(event.data.split("<|>")[1]);
         return;
     }
-    if (sender == "CONNECTED") {
+    else if (sender == "CONNECTED") {
         update_connected(event.data.split("<|>")[1]);
+        return;
+    }
+    else if (sender == "ROOMS") {
+        update_rooms(event.data.split("<|>")[1]);
         return;
     }
 
@@ -39,18 +43,22 @@ socket.addEventListener('message', (event) => {
 
     let msg_html = '<div class="message" id="';
 
-    if (sender == "SERVER") {
-        msg_html += 'server">';
+    const user = event.data.split("<|>")[1]
+    if (user == "") {
+        return;
+    }
+    if (user == "SERVER") {
+        msg_html += 'server"><i>@ ' + sender + '</i><br>';
     }
     else {
-        msg_html += 'recieved"><h3>' + sender + '</h3>';
+        msg_html += 'recieved"><h3>' + user + ' @' + sender + '</h3>';
     }
-    msg_html += event.data.split("<|>")[1];
+
+    msg_html += event.data.split("<|>")[2];
     msg_html += "</div>";
     message_window.innerHTML += msg_html;
 
     message_window.scrollTop = message_window.scrollHeight;
-    console.log("Message from server:", event.data);
 });
 
 socket.addEventListener('close', (event) => {
@@ -125,13 +133,19 @@ function unbanUser(name) {
 function update_connected(data) {
     const window = document.getElementById("connectedList");
     window.innerHTML = "";
+    if (data == "") {
+        return;
+    }
     let names = data.split("|");
 
-    for (let i = 0; i < names.length-1; i++) {
+    for (let i = 0; i < names.length; i++) {
+        const name = names[i].split("@")[0];
+        const room = names[i].split("@")[1];
         let addhtml = '<div class="nameline"><div>';
-        addhtml += names[i];
+        addhtml += name;
+        addhtml += " <i>@" + room + "</i>";
         addhtml += '</div><button onclick="kickUser(\'';
-        addhtml += names[i];
+        addhtml += name;
         addhtml += '\')" class="secondary">Kick</button></div>';
         window.innerHTML += addhtml;
     }
@@ -139,5 +153,35 @@ function update_connected(data) {
 
 function kickUser(name) {
     socket.send("CONTROL<|>KICK " + name);
+    console.log("KICKED");
+}
+
+function update_rooms(data) {
+    const window = document.getElementById("roomList");
+    window.innerHTML = "";
+
+    let rooms = data.split("|");
+
+    for (let i = 0; i < rooms.length; i++) {
+        const count = rooms[i].split("@")[0];
+        const roomname = rooms[i].split("@")[1];
+        let addhtml = '<div class="nameline"><div>';
+        addhtml += "<i>[" + count + "]</i> ";
+        addhtml += roomname;
+        addhtml += '</div><button onclick="deleteroom(\'';
+        addhtml += roomname;
+        addhtml += '\')" class="secondary" style="color:red;">Delete</button></div>';
+        window.innerHTML += addhtml;
+    }
+}
+
+function createroom() {
+    const nameinput = document.getElementById("newroomname");
+    socket.send("CONTROL<|>CREATEROOM " + nameinput.value);
+    nameinput.value = "";
+}
+
+function deleteroom(roomname) {
+    socket.send("CONTROL<|>DELETEROOM " + roomname);
 }
 

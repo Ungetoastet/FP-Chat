@@ -6,8 +6,8 @@ import java.util.logging.*;
 
 
 public class main {
-    static MessageHandler msgHandler;
     static ServerSocket server;
+    static RoomManager roomManager;
 
     public static void main(String[] args) {
         Logger logger = Logger.getLogger("mainLogger");
@@ -23,19 +23,13 @@ public class main {
             e.printStackTrace();
         }
 
+        roomManager = new RoomManager();
+        logger.info("Started room manager");
+
         try {
             server = new ServerSocket(1870);
             logger.info("Server running on " + server.getInetAddress() + ":" + server.getLocalPort());
             boolean accept_new_connections = true;
-
-            // Create message handler
-            msgHandler = new MessageHandler();
-            logger.info("Started message handler");
-
-            // Create and start server manager
-            ServerManager manager = new ServerManager(msgHandler);
-            logger.info("Started server manager");
-            manager.start();
 
             // Automatically open the frontend
             try {
@@ -48,16 +42,27 @@ public class main {
                 logger.severe("Error opening server frontend!");
                 e.printStackTrace();
             }
+            // Create server manager
+            ServerManager manager = new ServerManager(roomManager);
+
             // Start server manager frontend server and wait for connection
             ServerSocket frontendServer = new ServerSocket(1871);
-            FrontendThread frontendThread = new FrontendThread(frontendServer.accept(), msgHandler, manager);
+            FrontendThread frontendThread = new FrontendThread(frontendServer.accept(), roomManager, manager);
+
+            roomManager.register_frontend(frontendThread);
+            roomManager.newRoom("Hauptchat");
+            roomManager.newRoom("Nebenchat");
+            roomManager.newRoom("Kacke");
             frontendThread.start();
-            msgHandler.register_frontend(frontendThread);
             logger.info("Server frontend connected");
+
+            // Start server manager
+            logger.info("Started server manager");
+            manager.start();
 
             // Connect new clients
             while (accept_new_connections) {
-                ServerThread thread = new ServerThread(server.accept(), msgHandler);
+                ServerThread thread = new ServerThread(server.accept(), roomManager);
                 thread.start();
             }
         }
@@ -72,9 +77,9 @@ public class main {
     }
 
     public static void stop_server() {
-        msgHandler.push_message(null, "SERVER<|>Server wurde runtergefahren");
+        roomManager.getRooms().get(0).push_message(null, "SERVER<|>Server wurde runtergefahren");
         Logger logger = Logger.getLogger("mainLogger");
-        for (ServerThread client : msgHandler.getClientThreads()) {
+        for (ServerThread client : roomManager.getRooms().get(0).getClientThreads()) {
             client.disconnect();
         }
         try {

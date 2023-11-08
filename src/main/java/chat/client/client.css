@@ -31,6 +31,27 @@ div#chat-container {
     grid-row-gap: 10px;
 }
 
+div#room-container {
+    grid-area: 1 / 2 / 2 / 3;
+    padding: 10px;
+}
+
+button.roomcard {
+    background-color: var(--background);
+    color: var(--accent);
+    margin: 5px;
+    padding: 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    border: 2px solid var(--accent);
+    width: 100%;
+}
+
+button.roomcard#activeroom {
+    background-color: var(--accent);
+    color: var(--background);
+}
+
 div#window-chat {
     border: 5px solid var(--main);
     border-radius: 10px;

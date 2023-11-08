@@ -26,3 +26,4 @@ replay_pid*
 FP-Chat.iml
 .idea/inspectionProfiles/Project_Default.xml
 *.acc
+*.lck
