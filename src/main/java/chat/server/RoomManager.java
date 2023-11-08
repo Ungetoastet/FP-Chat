@@ -164,4 +164,9 @@ public class RoomManager {
         }
         serverfrontend.update_rooms();
     }
+
+    public void renameRoom(String oldname, String newname) {
+        get_room_by_name(oldname).room_name = newname;
+        update_client_room_list();
+    }
 }

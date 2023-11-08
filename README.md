@@ -45,9 +45,9 @@ Keine :)
 - ✅ außerdem sollen diese Ereignisse in einer Datei protokolliert werden (siehe Anhang 1)
 - ✅ Weiterentwicklung des Einraum-Systems zu einem Mehrraum-System
 - ✅ Optimierung der Benutzerkontenverwaltung durch eine dauerhafte Speicherung der Daten auf der Festplatte und der Möglichkeit, diese Datensätze anzuzeigen
-- Bereitstellung von Methoden zur Verwaltung von Räumen, wobei folgende Funktion- alitäten bereitgestellt werden müssen: (siehe Anhang 4)
+- ✅ Bereitstellung von Methoden zur Verwaltung von Räumen, wobei folgende Funktion- alitäten bereitgestellt werden müssen: (siehe Anhang 4)
 - ✅ Erstellen von Räumen
-- Editieren von Räumen
+- ✅ Editieren von Räumen
 - ✅ Löschen von Räumen
 - Bereitstellung von Methoden zur Verwaltung von Benutzern, wobei folgende Funktionalitäten bereitgestellt werden müssen:
 - Verwarnen von Benutzern (Client eine Nachricht schreiben)

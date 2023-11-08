@@ -166,9 +166,11 @@ function update_rooms(data) {
         const count = rooms[i].split("@")[0];
         const roomname = rooms[i].split("@")[1];
         let addhtml = '<div class="nameline"><div>';
-        addhtml += "<i>[" + count + "]</i> ";
+        addhtml += "<i>[" + count + "]</i> <input type='text' onchange='renameroom(\"" + roomname + "\", this.value)' value='";
         addhtml += roomname;
-        addhtml += '</div><button onclick="deleteroom(\'';
+        addhtml += '\'></div>';
+        // Delete Button
+        addhtml += '<button onclick="deleteroom(\'';
         addhtml += roomname;
         addhtml += '\')" class="secondary" style="color:red;">Delete</button></div>';
         window.innerHTML += addhtml;
@@ -185,3 +187,6 @@ function deleteroom(roomname) {
     socket.send("CONTROL<|>DELETEROOM " + roomname);
 }
 
+function renameroom(oldname, newname) {
+    socket.send("CONTROL<|>RENAMEROOM " + oldname + " " + newname);
+}

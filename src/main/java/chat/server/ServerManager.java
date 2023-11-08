@@ -124,6 +124,12 @@ class ServerManager extends Thread {
                 roomManager.update_client_room_list();
                 break;
 
+            case "RENAMEROOM":
+                roomManager.renameRoom(args[1], args[2]);
+                frontendThread.update_rooms();
+                frontendThread.update_connected();
+                break;
+
             case "SAY":
                 mainMsgHandler.push_message(null, "SERVER<|>" + input.split(" ", 2)[1]);
                 break;
