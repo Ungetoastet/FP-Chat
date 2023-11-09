@@ -4,6 +4,8 @@ const typing_button = document.getElementById("send");
 var roomtargets = "";
 var usertargets = "";
 
+var databuffer = "";
+
 window.addEventListener('beforeunload', function(event) {
     alert("Schließen des Frontends fährt den server runter.");
     stop_server();
@@ -24,20 +26,28 @@ socket.addEventListener('open', (event) => {
 
 socket.addEventListener('message', (event) => {
     console.log('Message: ', event.data);
+    databuffer += event.data.substring(6);
+    if (event.data.split("<|>")[0] == "END") {
+        processmsg(databuffer);
+        databuffer = "";
+    }
+});
+
+function processmsg(msg) {
     const message_window = document.getElementById("window-chat");
 
-    const sender = event.data.split("<|>")[0];
+    const sender = msg.split("<|>")[0];
 
     if (sender == "REGISTERED") {
-        update_registered(event.data.split("<|>")[1]);
+        update_registered(msg.split("<|>")[1]);
         return;
     }
     else if (sender == "CONNECTED") {
-        update_connected(event.data.split("<|>")[1]);
+        update_connected(msg.split("<|>")[1]);
         return;
     }
     else if (sender == "ROOMS") {
-        update_rooms(event.data.split("<|>")[1]);
+        update_rooms(msg.split("<|>")[1]);
         return;
     }
 
@@ -45,7 +55,7 @@ socket.addEventListener('message', (event) => {
 
     let msg_html = '<div class="message" id="';
 
-    const user = event.data.split("<|>")[1]
+    const user = msg.split("<|>")[1]
     if (user == "") {
         return;
     }
@@ -56,12 +66,12 @@ socket.addEventListener('message', (event) => {
         msg_html += 'recieved"><h3>' + user + ' @' + sender + '</h3>';
     }
 
-    msg_html += event.data.split("<|>")[2];
+    msg_html += msg.split("<|>")[2];
     msg_html += "</div>";
     message_window.innerHTML += msg_html;
 
     message_window.scrollTop = message_window.scrollHeight;
-});
+}
 
 socket.addEventListener('close', (event) => {
     alert("Server wurde herruntergefahren. Dieses Fenster schließt sich jetzt.");
@@ -76,12 +86,12 @@ socket.addEventListener('error', (error) => {
 function send_message() {
     const text = typing_input.value;
     const target_selection = document.getElementById("messageTarget");
-    socket.send("SERVER<|>" + target_selection.value + "<|>" + text);
+    send("SERVER<|>" + target_selection.value + "<|>" + text);
     typing_input.value = "";
 }
 
 function stop_server() {
-    socket.send("CONTROL<|>EXIT");
+    send("CONTROL<|>EXIT");
 }
 
 function update_registered(data) {
@@ -122,15 +132,15 @@ function update_registered(data) {
 }
 
 function banUser(name) {
-    socket.send("CONTROL<|>BAN " + name);
+    send("CONTROL<|>BAN " + name);
 }
 
 function deleteUser(name) {
-    socket.send("CONTROL<|>DELETE " + name);
+    send("CONTROL<|>DELETE " + name);
 }
 
 function unbanUser(name) {
-    socket.send("CONTROL<|>UNBAN " + name);
+    send("CONTROL<|>UNBAN " + name);
 }
 
 function update_connected(data) {
@@ -167,7 +177,7 @@ function update_connected(data) {
 }
 
 function kickUser(name) {
-    socket.send("CONTROL<|>KICK " + name);
+    send("CONTROL<|>KICK " + name);
     console.log("KICKED");
 }
 
@@ -204,14 +214,28 @@ function update_rooms(data) {
 
 function createroom() {
     const nameinput = document.getElementById("newroomname");
-    socket.send("CONTROL<|>CREATEROOM " + nameinput.value);
+    send("CONTROL<|>CREATEROOM " + nameinput.value);
     nameinput.value = "";
 }
 
 function deleteroom(roomname) {
-    socket.send("CONTROL<|>DELETEROOM " + roomname);
+    send("CONTROL<|>DELETEROOM " + roomname);
 }
 
 function renameroom(oldname, newname) {
-    socket.send("CONTROL<|>RENAMEROOM " + oldname + " " + newname);
+    send("CONTROL<|>RENAMEROOM " + oldname + " " + newname);
+}
+
+function send(data) {
+    const chunksize = 65000;
+    datasplit = splitString(data, chunksize);
+    for (let i = 0; i < datasplit.length - 1; i++) {
+        socket.send("DAT<|>" + datasplit[i]);
+    }
+    socket.send("END<|>" + datasplit[datasplit.length-1])
+}
+
+function splitString(inputString, chunkSize) {
+    const regex = new RegExp(`.{1,${chunkSize}}`, 'g');
+    return inputString.match(regex) || [];
 }

@@ -30,7 +30,7 @@ class MessageHandler extends Thread {
         this.client_threads.add(client);
         roomManager.register_client(client);
         push_message(null, "SERVER<|>" + client.account.name + " ist beigetreten");
-        logger.info(room_name + ": Client from " + client.client.getInetAddress() + " logged in with account: " + client.account.name);
+        logger.info(room_name + ": Client from " + client.client.socket.getInetAddress() + " logged in with account: " + client.account.name);
         update_client_connection_info();
     }
 
@@ -39,7 +39,7 @@ class MessageHandler extends Thread {
         this.client_threads.remove(client);
         push_message(null, "SERVER<|>" + client.account.name + " ist gegangen");
         roomManager.deregister_client(client);
-        logger.info(room_name + ": Deregistered client from: " + client.client.getInetAddress());
+        logger.info(room_name + ": Deregistered client from: " + client.client.socket.getInetAddress());
         update_client_connection_info();
     }
 
@@ -58,7 +58,7 @@ class MessageHandler extends Thread {
             client.send_message(message);
         }
         if (sender != null) {
-            logger.info("Pushed message from " + sender.account.name + "@" + sender.client.getInetAddress() + ": " + message);
+            logger.info("Pushed message from " + sender.account.name + "@" + sender.client.socket.getInetAddress() + ": " + message);
         }
     }
 

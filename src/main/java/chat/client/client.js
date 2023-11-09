@@ -3,6 +3,7 @@ const typing_input = document.getElementById("composer");
 const typing_button = document.getElementById("send");
 let user_name = "PLACEHOLDER";
 let logged_in = false;
+var databuffer = "";
 
 // Add an event listener to the input field for the "keydown" event
 typing_input.addEventListener("keydown", function(event) {
@@ -14,7 +15,7 @@ typing_input.addEventListener("keydown", function(event) {
 });
 
 window.addEventListener('beforeunload', function(event) {
-    socket.send("CLOSE");
+    send("CLOSE");
 });
 
 // Connection opened
@@ -24,11 +25,18 @@ socket.addEventListener("open", (event) => {
 
 // Listen for messages from the server
 socket.addEventListener("message", (event) => {
-    const message_window = document.getElementById("window-chat");
     console.log(event.data);
+    databuffer += event.data.substring(6);
+    if (event.data.split("<|>")[0] == "END") {
+        processmsg(databuffer);
+        databuffer = "";
+    }
+});
 
-    let sender = event.data.split("<|>")[0];
-    let status = event.data.split("<|>")[1];
+function processmsg(msg) {
+    const message_window = document.getElementById("window-chat");
+    let sender = msg.split("<|>")[0];
+    let status = msg.split("<|>")[1];
 
     if (sender == "ROOMS") {
         update_rooms(status);
@@ -69,8 +77,7 @@ socket.addEventListener("message", (event) => {
     message_window.innerHTML += msg_html;
 
     message_window.scrollTop = message_window.scrollHeight;
-    console.log("Message from server:", event.data);
-});
+}
 
 // Connection closed
 socket.addEventListener("close", (event) => {
@@ -86,7 +93,7 @@ socket.addEventListener("error", (event) => {
 function send_message() {
     const message_window = document.getElementById("window-chat");
     let text = typing_input.value;
-    socket.send(user_name + "<|>" + text);
+    send(user_name + "<|>" + text);
     typing_input.value = "";
     message_window.innerHTML += '<div class="message" id="sent">' + text + '<\div>';
     message_window.scrollTop = message_window.scrollHeight;
@@ -101,7 +108,7 @@ function login() {
     if (name.length + pw.length < 7) {
         alert("Name und Passwort müssen jeweils mindestens 3 Zeichen lang sein.")
     }
-    socket.send("LOGIN<|>" + name + "<|>" + pw);
+    send("LOGIN<|>" + name + "<|>" + pw);
     user_name = name;
 }
 
@@ -134,7 +141,7 @@ function register() {
         alert("Name ist reserviert und kann nicht verwendet werden.")
         return;
     }
-    socket.send("REGISTER<|>" + name.value + "<|>" + pw.value);
+    send("REGISTER<|>" + name.value + "<|>" + pw.value);
     user_name = name.value;
 }
 
@@ -166,7 +173,7 @@ function switch_to_room(room_name) {
     console.log("Switching to room " + room_name);
     const message_window = document.getElementById("window-chat");
     message_window.innerHTML = "";
-    socket.send("SWITCHROOM<|>" + room_name);
+    send("SWITCHROOM<|>" + room_name);
 }
 
 function update_connected(connectedinfo) {
@@ -184,4 +191,18 @@ function update_connected(connectedinfo) {
         newhtml = "<i>Noch ist keiner hier...</i>"
     }
     roomlist.innerHTML = newhtml;
+}
+
+function send(data) {
+    const chunksize = 65000;
+    datasplit = splitString(data, chunksize);
+    for (let i = 0; i < datasplit.length - 1; i++) {
+        socket.send("DAT<|>" + datasplit[i]);
+    }
+    socket.send("END<|>" + datasplit[datasplit.length-1])
+}
+
+function splitString(inputString, chunkSize) {
+    const regex = new RegExp(`.{1,${chunkSize}}`, 'g');
+    return inputString.match(regex) || [];
 }

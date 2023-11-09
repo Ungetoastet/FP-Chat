@@ -50,7 +50,7 @@ class ServerManager extends Thread {
             case "EXIT":
                 System.out.println("[SERVER] >> Stopping server");
                 try {
-                    frontendThread.socket.close();
+                    frontendThread.websocket.socket.close();
                 } catch (IOException e) {
                     System.out.println("Error in Server Manager - Frontend shutdown:\n");
                     e.printStackTrace();

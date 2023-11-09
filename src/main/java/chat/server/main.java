@@ -47,7 +47,7 @@ public class main {
 
             // Start server manager frontend server and wait for connection
             ServerSocket frontendServer = new ServerSocket(1871);
-            FrontendThread frontendThread = new FrontendThread(frontendServer.accept(), roomManager, manager);
+            FrontendThread frontendThread = new FrontendThread(new Websocket(frontendServer.accept()), roomManager, manager);
 
             roomManager.register_frontend(frontendThread);
             roomManager.newRoom("Hauptchat");
@@ -62,7 +62,7 @@ public class main {
 
             // Connect new clients
             while (accept_new_connections) {
-                ServerThread thread = new ServerThread(server.accept(), roomManager);
+                ServerThread thread = new ServerThread(new Websocket(server.accept()), roomManager);
                 thread.start();
             }
         }
