@@ -49,8 +49,8 @@ Keine :)
 - ✅ Erstellen von Räumen
 - ✅ Editieren von Räumen
 - ✅ Löschen von Räumen
-- Bereitstellung von Methoden zur Verwaltung von Benutzern, wobei folgende Funktionalitäten bereitgestellt werden müssen:
-- Verwarnen von Benutzern (Client eine Nachricht schreiben)
+- ✅ Bereitstellung von Methoden zur Verwaltung von Benutzern, wobei folgende Funktionalitäten bereitgestellt werden müssen:
+- ✅ Verwarnen von Benutzern (Client eine Nachricht schreiben)
 - ✅ Temporäres Ausschließen von Benutzern (Verbindung zum Client trennen)
 - ✅ Permanentes Ausschließen von Benutzern (Verbindung zum Client trennen und erneutes Anmelden des Clients verhindern)
 
