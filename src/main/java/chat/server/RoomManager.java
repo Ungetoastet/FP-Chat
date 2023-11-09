@@ -69,7 +69,7 @@ public class RoomManager {
                 return room;
             }
         }
-        return rooms.get(0);
+        return null;
     }
 
     public void register_account(Account account) {
@@ -168,5 +168,14 @@ public class RoomManager {
     public void renameRoom(String oldname, String newname) {
         get_room_by_name(oldname).room_name = newname;
         update_client_room_list();
+    }
+
+    public ServerThread get_client_by_name(String name) {
+        for (ServerThread cli : this.connected_clients) {
+            if (cli.account.name.equals(name)) {
+                return cli;
+            }
+        }
+        return null;
     }
 }

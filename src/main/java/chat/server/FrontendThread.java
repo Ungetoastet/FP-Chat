@@ -76,7 +76,17 @@ class FrontendThread extends Thread{
                 continue;
             }
             logger.info("Recieved frontend message: " + msg);
-            mainMsgHandler.push_message(null, msg);
+            String target = msg.split("<\\|>")[1];
+            MessageHandler targetroom = roomManager.get_room_by_name(target);
+            if (targetroom != null) {
+                targetroom.push_message(null, "SERVER<|>" + msg.split("<\\|>")[2]);
+            }
+            else {
+                ServerThread clitarget = roomManager.get_client_by_name(target);
+                if (clitarget != null) {
+                    clitarget.send_message("SERVER<|>" + msg.split("<\\|>")[2]);
+                }
+            }
         }
         logger.info("Frontend shutdown.");
     }

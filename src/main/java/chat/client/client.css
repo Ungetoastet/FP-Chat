@@ -81,7 +81,7 @@ div#window-type {
     align-items: flex-end;
 }
 
-input {
+input, select {
     background-color: var(--background);
     margin-right: 10px;
     border: 1px solid var(--main);

@@ -1,6 +1,8 @@
 const socket = new WebSocket("ws://localhost:1871");
 const typing_input = document.getElementById("composer");
 const typing_button = document.getElementById("send");
+var roomtargets = "";
+var usertargets = "";
 
 window.addEventListener('beforeunload', function(event) {
     alert("Schließen des Frontends fährt den server runter.");
@@ -72,8 +74,9 @@ socket.addEventListener('error', (error) => {
 });
 
 function send_message() {
-    let text = typing_input.value;
-    socket.send("SERVER<|>" + text);
+    const text = typing_input.value;
+    const target_selection = document.getElementById("messageTarget");
+    socket.send("SERVER<|>" + target_selection.value + "<|>" + text);
     typing_input.value = "";
 }
 
@@ -131,8 +134,12 @@ function unbanUser(name) {
 }
 
 function update_connected(data) {
-    const window = document.getElementById("connectedList");
-    window.innerHTML = "";
+    const cwindow = document.getElementById("connectedList");
+    const target_dropdown = document.getElementById("messageTarget");
+
+    cwindow.innerHTML = "";
+    usertargets = "";
+
     if (data == "") {
         return;
     }
@@ -141,14 +148,22 @@ function update_connected(data) {
     for (let i = 0; i < names.length; i++) {
         const name = names[i].split("@")[0];
         const room = names[i].split("@")[1];
+
+        // Build connected-window entry
         let addhtml = '<div class="nameline"><div>';
         addhtml += name;
         addhtml += " <i>@" + room + "</i>";
         addhtml += '</div><button onclick="kickUser(\'';
         addhtml += name;
         addhtml += '\')" class="secondary">Kick</button></div>';
-        window.innerHTML += addhtml;
+        cwindow.innerHTML += addhtml;
+
+        // Build target room selection
+        addhtml = '<option value="' + name + '">';
+        addhtml += 'USER: ' + name + '</option>';
+        usertargets += addhtml;
     }
+    target_dropdown.innerHTML = roomtargets + usertargets;
 }
 
 function kickUser(name) {
@@ -158,13 +173,17 @@ function kickUser(name) {
 
 function update_rooms(data) {
     const window = document.getElementById("roomList");
-    window.innerHTML = "";
+    const target_dropdown = document.getElementById("messageTarget");
 
+    window.innerHTML = "";
+    roomtargets = "";
     let rooms = data.split("|");
 
     for (let i = 0; i < rooms.length; i++) {
         const count = rooms[i].split("@")[0];
         const roomname = rooms[i].split("@")[1];
+
+        // Build window list
         let addhtml = '<div class="nameline"><div>';
         addhtml += "<i>[" + count + "]</i> <input type='text' onchange='renameroom(\"" + roomname + "\", this.value)' value='";
         addhtml += roomname;
@@ -174,7 +193,13 @@ function update_rooms(data) {
         addhtml += roomname;
         addhtml += '\')" class="secondary" style="color:red;">Delete</button></div>';
         window.innerHTML += addhtml;
+
+        // Build target room selection
+        addhtml = '<option value="' + roomname + '">';
+        addhtml += 'ROOM: ' + roomname + '</option>';
+        roomtargets += addhtml;
     }
+    target_dropdown.innerHTML = roomtargets + usertargets;
 }
 
 function createroom() {
