@@ -55,7 +55,11 @@ class ServerThread extends Thread {
                 }
                 if (login[0].equals("REGISTER")) {
                     this.account = new Account(login[1], login[2]);
-                    roomManager.register_account(this.account);
+                    boolean reg_success = roomManager.register_account(this.account);
+                    if (!reg_success) {
+                        send_message("LOGIN<|>DUPLICATE");
+                        continue;
+                    }
                     activeMsgHandler = roomManager.rooms.get(0);
                     activeMsgHandler.push_message(this, "SERVER<|>" + account.name + " hat sich registriert");
                     logged_in = true;

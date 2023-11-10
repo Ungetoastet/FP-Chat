@@ -58,6 +58,9 @@ function processmsg(msg) {
         else if (status == "BANNED") {
             alert("Dieser Account wurde gesperrt.")
         }
+        else if (status == "DUPLICATE") {
+            alert("Ein Account mit diesem Name ist bereits registriert!")
+        }
         else {
             alert("Login Fehler " + status);
         }

@@ -72,11 +72,15 @@ public class RoomManager {
         return null;
     }
 
-    public void register_account(Account account) {
+    public boolean register_account(Account account) {
+        if (this.find_account_by_name(account.name) != null) {
+            return false;
+        }
         this.registered_users.add(account);
         serverfrontend.update_registered();
         saveAccounts();
         logger.info("Registered user: " + account.name);
+        return true;
     }
     public void delete_account(Account account) {
         this.registered_users.remove(account);
@@ -174,6 +178,15 @@ public class RoomManager {
         for (ServerThread cli : this.connected_clients) {
             if (cli.account.name.equals(name)) {
                 return cli;
+            }
+        }
+        return null;
+    }
+
+    public Account find_account_by_name(String name) {
+        for (Account acc : this.registered_users) {
+            if (acc.name.equals(name)) {
+                return acc;
             }
         }
         return null;
