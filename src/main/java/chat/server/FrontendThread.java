@@ -38,7 +38,6 @@ class FrontendThread extends Thread{
         // Message read loop
         while (!websocket.socket.isClosed()) {
             String msg = wait_for_message();
-            System.out.println("Nachricht empfangen, Länge: " + msg.length() + " Zeichen");
             if (msg.equals("CLOSED")) {
                 try {
                     websocket.socket.close();

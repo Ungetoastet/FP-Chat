@@ -60,7 +60,7 @@ Keine :)
 - ✅ Anzeige der Namen aller vorhandenen Räume
 - ✅ Anzeige der Namen aller Benutzer aus demjenigen Raum, in welchem sich der Client befindet
 - ✅ Anordnung einer Kommunikationsoberfläche, wodurch die Möglichkeit geschaffen wird, mit anderen Clients zu kommunizieren (siehe Anhang 6)
-- Möglichkeit zum Versenden und Empfangen von PDF- und Bilddateien, die auf der empfangenden Client-Seite durch Einbindung geeigneter Bibliotheksfunktionen gesondert dargestellt werden sollen.
+- ✅ Möglichkeit zum Versenden und Empfangen von PDF- und Bilddateien, die auf der empfangenden Client-Seite durch Einbindung geeigneter Bibliotheksfunktionen gesondert dargestellt werden sollen.
 
 
 ## Meilenstein 3

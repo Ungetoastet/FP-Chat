@@ -235,3 +235,30 @@ button:active {
     background: var(--main);
 }
 
+input[type="file"] {
+    position: relative;
+    content: "Test";
+}
+
+input[type="file"]::file-selector-button {
+    color: transparent;
+    background-color: var(--background);
+    border-radius: 5px;
+    border: 2px solid var(--soft);
+    width: 85px;
+}
+
+input[type="file"]::after {
+    position: absolute;
+    pointer-events: none;
+    top: 13px;
+    left: 40px;
+    color: var(--soft);
+    content: "Upload";
+}
+
+img, object{
+    border-radius: 10px;
+    width: 30vw;
+}
+

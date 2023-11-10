@@ -75,6 +75,9 @@ class ServerThread extends Thread {
                 String msg = wait_for_message();
                 if (!process_message(msg)) {
                     // push the message only if it wasnt a command
+                    if (activeMsgHandler == null) {
+                        continue;
+                    }
                     activeMsgHandler.push_message(this, msg);
                 }
             }

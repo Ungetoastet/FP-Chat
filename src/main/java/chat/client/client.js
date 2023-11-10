@@ -72,8 +72,23 @@ function processmsg(msg) {
     else {
         msg_html += 'recieved"><h3>' + sender + '</h3>';
     }
-    msg_html += status // Erstes Wort abschneiden
-    msg_html += "</div>"
+    if (status == "!IMG") {
+        // IMAGE RECIEVING
+        let imageData = msg.split("<|>")[2];
+        msg_html += "<img alt='sent img' src='";
+        msg_html += imageData;
+        msg_html += "'>"
+    }
+    else if (status == "!PDF") {
+        // PDF RECIEVING
+        let pdfData = msg.split("<|>")[2];
+        msg_html += '<object type="application/pdf" height="300px" data="';
+        msg_html += pdfData + '"></object>';
+    }
+    else {
+        msg_html += status;
+    }
+    msg_html += "</div>";
     message_window.innerHTML += msg_html;
 
     message_window.scrollTop = message_window.scrollHeight;
@@ -91,12 +106,41 @@ socket.addEventListener("error", (event) => {
 });
 
 function send_message() {
+    // Send text first
     const message_window = document.getElementById("window-chat");
     let text = typing_input.value;
-    send(user_name + "<|>" + text);
-    typing_input.value = "";
-    message_window.innerHTML += '<div class="message" id="sent">' + text + '<\div>';
-    message_window.scrollTop = message_window.scrollHeight;
+    if (text != "") {
+        typing_input.value = "";
+        send(user_name + "<|>" + text);
+        message_window.innerHTML += '<div class="message" id="sent">' + text + '<\div>';
+        message_window.scrollTop = message_window.scrollHeight;
+    }
+
+    // Send file after
+    const filein = document.getElementById("file");
+    const file = filein.files[0];
+    if (file === undefined) { return; }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = function (e) {
+
+        // IMAGE SENDING
+        if (!file.name.endsWith(".pdf")) {
+            send(user_name + "<|>" + "!IMG" + "<|>" + e.target.result);
+            let addhtml = '<div class="message" id="sent"><img src="';
+            addhtml += e.target.result + '" alt="sent_img"><\div>';
+            message_window.innerHTML += addhtml;
+        }
+        else {
+            // PDF SENDING
+            send(user_name + "<|>" + "!PDF" + "<|>" + e.target.result);
+            addhtml = '<div class="message" id="sent"><object type="application/pdf" height="300px" data="';
+            addhtml += e.target.result + '"><\div>';
+            message_window.innerHTML += addhtml;
+            message_window.scrollTop = message_window.scrollHeight;
+        }
+    }
+    filein.value = "";
 }
 
 function login() {

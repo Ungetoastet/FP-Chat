@@ -66,7 +66,23 @@ function processmsg(msg) {
         msg_html += 'recieved"><h3>' + user + ' @' + sender + '</h3>';
     }
 
-    msg_html += msg.split("<|>")[2];
+    let status = msg.split("<|>")[2];
+    if (status == "!IMG") {
+        // IMAGE RECIEVING
+        let imageData = msg.split("<|>")[3];
+        msg_html += "<img alt='sent img' src='";
+        msg_html += imageData;
+        msg_html += "'>"
+    }
+    else if (status == "!PDF") {
+        // PDF RECIEVING
+        let pdfData = msg.split("<|>")[3];
+        msg_html += '<object type="application/pdf" height="300px" data="';
+        msg_html += pdfData + '"></object>';
+    }
+    else {
+        msg_html += status;
+    }
     msg_html += "</div>";
     message_window.innerHTML += msg_html;
 
