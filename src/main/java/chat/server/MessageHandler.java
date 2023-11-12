@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 class MessageHandler extends Thread {
     FrontendThread serverfrontend;
     LinkedList<ServerThread> client_threads;
+    LinkedList<String> message_history;
     String room_name;
     Logger logger;
     RoomManager roomManager;
@@ -15,6 +16,7 @@ class MessageHandler extends Thread {
     MessageHandler(String name, FrontendThread sf, RoomManager rm) {
         this.logger = Logger.getLogger("mainLogger");
         this.client_threads = new LinkedList<>();
+        this.message_history = new LinkedList<>();
         this.room_name = name;
         this.serverfrontend = sf;
         this.roomManager = rm;
@@ -29,9 +31,12 @@ class MessageHandler extends Thread {
         userCount += 1;
         this.client_threads.add(client);
         roomManager.register_client(client);
-        push_message(null, "SERVER<|>" + client.account.name + " ist beigetreten");
         logger.info(room_name + ": Client from " + client.client.socket.getInetAddress() + " logged in with account: " + client.account.name);
         update_client_connection_info();
+        for (String past_message : message_history) {
+            client.send_message(past_message);
+        }
+        push_message(null, "SERVER<|>" + client.account.name + " ist beigetreten");
     }
 
     public void deregister_client(ServerThread client) {
@@ -59,6 +64,7 @@ class MessageHandler extends Thread {
         }
         if (sender != null) {
             logger.info("Pushed message from " + sender.account.name + "@" + sender.client.socket.getInetAddress() + ": " + message);
+            message_history.add(message);
         }
     }
 

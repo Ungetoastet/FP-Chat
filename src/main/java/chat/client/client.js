@@ -78,6 +78,10 @@ function processmsg(msg) {
         newmsg.id = "server";
         last_message_from = "";
     }
+    else if (sender == user_name) {
+        newmsg.id = "sent";
+        compact = false;
+    }
     else {
         newmsg.id = "recieved";
         newmsg.className = "message fresh";
@@ -108,7 +112,10 @@ function processmsg(msg) {
     message_window.appendChild(newmsg);
 
     message_window.scrollTop = message_window.scrollHeight;
-    setTimeout(function() { newmsg.className = "message";}, 500);
+    setTimeout(function() {
+        message_window.scrollTop = message_window.scrollHeight;
+        newmsg.className = "message";
+    }, 500);
 }
 
 // Connection closed

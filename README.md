@@ -14,9 +14,10 @@ Einer kann was, die andere malt.
 Keine :)
 
 ## Nice to have
-- Zeitstempel für Nachrichten
-- Laden des Chatverlaufs beim Betreten eines Raums
+- Zeitstempel für Nachrichten (muss serverseitig gestempelt werden)
 - Togglebarer Darkmode für Client
+- ✅ Laden des Chatverlaufs beim Betreten eines Raums
+- ✅ Nachrichtenanimationen
 
 ## Meilenstein 1
 ### Server
