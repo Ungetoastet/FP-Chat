@@ -166,7 +166,9 @@ public class RoomManager {
         for (ServerThread cli : connected_clients) {
             cli.update_rooms();
         }
-        serverfrontend.update_rooms();
+        if (serverfrontend != null) {
+            serverfrontend.update_rooms();
+        }
     }
 
     public void renameRoom(String oldname, String newname) {
