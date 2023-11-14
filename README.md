@@ -14,9 +14,10 @@ Einer kann was, die andere malt.
 Keine :)
 
 ## Nice to have
-- Zeitstempel für Nachrichten
-- Laden des Chatverlaufs beim Betreten eines Raums
+- Zeitstempel für Nachrichten (muss serverseitig gestempelt werden)
 - Togglebarer Darkmode für Client
+- ✅ Laden des Chatverlaufs beim Betreten eines Raums
+- ✅ Nachrichtenanimationen
 
 ## Meilenstein 1
 ### Server
@@ -65,17 +66,17 @@ Keine :)
 
 ## Meilenstein 3
 ### Server
-- Weiterentwicklung des Chatroom-Systems durch die Einführung einer Kommunikation über private Räume zwischen 2 Clients (siehe Anhang 1)
-- Bereitstellung von Mechanismen für Clients zur Verwaltung von privaten Räumen, wobei folgende Funktionalitäten vom Server bereitgestellt werden müssen:
-- Eröffnen eines privaten Raumes
-- Senden von Nachrichten von einem Client zum anderen Client
-- Schließen eines privaten Raumes
+- ✅ Weiterentwicklung des Chatroom-Systems durch die Einführung einer Kommunikation über private Räume zwischen 2 Clients (siehe Anhang 1)
+- ✅ Bereitstellung von Mechanismen für Clients zur Verwaltung von privaten Räumen, wobei folgende Funktionalitäten vom Server bereitgestellt werden müssen:
+- ✅ Eröffnen eines privaten Raumes
+- ✅ Senden von Nachrichten von einem Client zum anderen Client
+- ✅ Schließen eines privaten Raumes
 
 ### Client
-- Bereitstellen eines Dialogfensters sowie folgender Wahlmöglichkeiten zum Umgang mit privaten Räumen: (siehe Anhang 1)
-- Eröffnen eines privaten Raumes
-- Senden von Nachrichten von einem Client zum anderen Client
-- Schließen eines privaten Raumes
+- ✅ Bereitstellen eines Dialogfensters sowie folgender Wahlmöglichkeiten zum Umgang mit privaten Räumen: (siehe Anhang 1)
+- ✅ Eröffnen eines privaten Raumes
+- ✅ Senden von Nachrichten von einem Client zum anderen Client
+- ✅ Schließen eines privaten Raumes
 
 
 ## Andere Ideen

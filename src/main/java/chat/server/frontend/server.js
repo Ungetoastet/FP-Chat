@@ -214,10 +214,13 @@ function update_rooms(data) {
         addhtml += "<i>[" + count + "]</i> <input type='text' onchange='renameroom(\"" + roomname + "\", this.value)' value='";
         addhtml += roomname;
         addhtml += '\'></div>';
+
         // Delete Button
-        addhtml += '<button onclick="deleteroom(\'';
-        addhtml += roomname;
-        addhtml += '\')" class="secondary" style="color:red;">Delete</button></div>';
+        if (rooms.length > 1) {
+            addhtml += '<button onclick="deleteroom(\'';
+            addhtml += roomname;
+            addhtml += '\')" class="secondary" style="color:red;">Delete</button></div>';
+        }
         window.innerHTML += addhtml;
 
         // Build target room selection

@@ -1,17 +1,17 @@
 :root {
     /* Paletten generator: https://coolors.co/ff6781-121417-ccf5ac-717568-297373 */
-
     --background: #E8EAFF;
     --main: #8287C0;
+    --tint: #b9bce8;
     --accent: #644DA8;
     --soft: #61618d;
 }
 
 body {
     background-color: var(--background);
+    font-family: "Segoe UI", sans-serif;
     color: var(--accent);
     margin: 30px;
-    font-family: sans-serif;
 }
 
 h1 {
@@ -51,7 +51,7 @@ div#connected-container {
 button.roomcard {
     background-color: var(--background);
     color: var(--accent);
-    margin: 5px;
+    margin: 5px 0;
     padding: 15px;
     border-radius: 15px;
     font-weight: bold;
@@ -90,9 +90,17 @@ input, select {
     font-weight: bold;
     padding: 10px 20px;
 }
+select {
+    cursor: pointer;
+}
+input {
+    cursor: text;
+}
 
 input#composer {
     width: 100%;
+    padding-top: 13px;
+    padding-bottom: 12px;
 }
 
 .modal-content input{
@@ -107,7 +115,7 @@ input#passconfirm {
 }
 
 div.message {
-    margin: 10px 10px;
+    margin: 15px 10px;
     border-radius: 15px;
     color: var(--background);
     font-weight: bolder;
@@ -117,9 +125,10 @@ div.message {
     overflow-wrap: break-word;
 }
 
+
 div.message#sent {
-    margin-left: auto;
-    margin-right: 10px;
+    border-radius: 15px 15px 0 15px / 15px 15px 0 15px;
+    margin: 5px 10px 5px auto;
     background-color: var(--background);
     border: 2px solid var(--main);
     color: var(--main);
@@ -127,6 +136,7 @@ div.message#sent {
 
 div.message#recieved {
     background-color: var(--main);
+    border-radius: 15px 15px 15px 0 / 15px 15px 15px 0;
 }
 
 div.message#recieved h3{
@@ -144,6 +154,16 @@ div.message#server {
     margin-top: 10px;
 }
 
+div.message.fresh#recieved {
+    animation: slide-in-left 500ms cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+}
+div.message.fresh#sent {
+    animation: slide-in-bottom 500ms cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+}
+div.message.fresh#server {
+    animation: ease-in-out 0.2s fade-in;
+}
+
 i {
     opacity: 50%;
     font-size: smaller;
@@ -154,6 +174,8 @@ button {
     border-width: 0px;
     font-weight: bolder;
     padding: 10px 20px;
+    cursor: pointer;
+    transition: box-shadow 0.3s;
 }
 
 button.main {
@@ -187,6 +209,7 @@ button:active {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    animation: ease-in-out 0.5s fade-in;
 }
 
 /* Modal Content/Box */
@@ -197,22 +220,6 @@ button:active {
     border: 2px solid var(--main);
     width: 60%; /* Could be more or less, depending on screen size */
     border-radius: 20px;
-}
-
-
-
-/* Animations */
-@keyframes scale-in-ver-top {
-    0% {
-      transform: scaleY(0);
-      transform-origin: 100% 0%;
-      opacity: 1;
-    }
-    100% {
-      transform: scaleY(1);
-      transform-origin: 100% 0%;
-      opacity: 1;
-    }
 }
 
 /* width */
@@ -241,6 +248,7 @@ input[type="file"] {
 }
 
 input[type="file"]::file-selector-button {
+    cursor: pointer;
     color: transparent;
     background-color: var(--background);
     border-radius: 5px;
@@ -262,3 +270,50 @@ img, object{
     width: 30vw;
 }
 
+/* Style the tab */
+.tab {
+    display: flex;
+    overflow: hidden;
+    color: var(--main);
+    background-color: var(--background);
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    color: var(--accent);
+    flex: 1;
+    background-color: inherit;
+    padding: 14px 16px;
+    transition: 0.3s;
+    border-radius: 20px 20px 0 0 / 20px 20px 0 0 ;
+    border: 1px solid var(--main);
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: var(--tint);
+    border-bottom: none;
+}
+
+/* Style the tab content */
+.tabcontent {
+    border: 1px solid var(--main);
+    background-color: var(--tint);
+    display: none;
+    padding: 6px;
+    border-top: none;
+    border-radius: 0 0 5px 5px / 0 0 5px 5px;
+    animation: ease-in-out 0.2s fade-in;
+    overflow-y: scroll;
+    max-height: 70%;
+}
+
+#privatelist button {
+    width: 29%;
+    padding: 5px;
+    height: 40px;
+}
+#privatelist .roomcard {
+    width: 70%;
+    margin-right: 1%;
+}

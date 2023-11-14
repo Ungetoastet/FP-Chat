@@ -43,7 +43,7 @@ class ServerManager extends Thread {
 
     public void process_command(String input) {
         String cmd = input.split(" ")[0].toUpperCase();
-        String[] args = input.split(" ");
+        String[] args = input.split(" ", 2);
         switch (cmd) {
             case "":
                 break;

@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
     <head>
+        <meta charset="UTF-8">
         <link rel="stylesheet" href="client.css">
+        <link rel="stylesheet" href="animations.css">
         <title>LRChat</title>
     </head>
     <body>
         <h1>LR Chat client</h1>
-        <h3>Lucios & Robertos ultra-premium Chat-client</h3>
-        <br><br>
+        <h3>Lucios & Robertos ultra-premium Chat-client höhö</h3>
         <div style="width: 20%;">
         </div>
 
@@ -22,9 +23,31 @@
                 </div>
             </div>
             <div id="room-container">
-                <button class="roomcard" id="activeroom"><i>[5]</i> Room A </button>
-                <button class="roomcard"><i>[2]</i> Room B </button>
-                <button class="roomcard"><i>[3]</i> Room C</button>
+                <i>Räume und Chats</i>
+                <div class="tab">
+                    <button class="tablinks active" onclick="switchtab(event, 'publics-container')">Öffentlich</button>
+                    <button class="tablinks" onclick="switchtab(event, 'privates-container')">Privat</button>
+                </div>
+                <div id="publics-container" class="tabcontent" style="display: block">
+                    <button class="roomcard" id="activeroom"><i>[5]</i> Room A </button>
+                    <button class="roomcard"><i>[2]</i> Room B </button>
+                    <button class="roomcard"><i>[3]</i> Room C</button>
+                </div>
+                <div id="privates-container" class="tabcontent">
+                    <div style="display: flex; margin-bottom: 10px">
+                        <select id="messageTarget" style="flex: 1">
+                            <option>USER C</option>
+                            <option>USER D</option>
+                            <option>USER E</option>
+                            <option>USER F</option>
+                        </select>
+                        <button class="secondary" style="flex: 1" onclick="create_private_room()">Chatten</button>
+                    </div>
+                    <div id="privatelist">
+                        <button class="roomcard"> Privatchat A  </button>
+                        <button class="roomcard"> Privatchat B  </button>
+                    </div>
+                </div>
             </div>
             <div id="connected-container">
             </div>
@@ -45,5 +68,5 @@
             </div>
         </div>
     </body>
-    <script src="client.js"></script>
+    <script charset="UTF-8" src="client.js"></script>
 </html>

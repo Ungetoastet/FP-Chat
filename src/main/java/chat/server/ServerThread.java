@@ -55,7 +55,11 @@ class ServerThread extends Thread {
                 }
                 if (login[0].equals("REGISTER")) {
                     this.account = new Account(login[1], login[2]);
-                    roomManager.register_account(this.account);
+                    boolean reg_success = roomManager.register_account(this.account);
+                    if (!reg_success) {
+                        send_message("LOGIN<|>DUPLICATE");
+                        continue;
+                    }
                     activeMsgHandler = roomManager.rooms.get(0);
                     activeMsgHandler.push_message(this, "SERVER<|>" + account.name + " hat sich registriert");
                     logged_in = true;
@@ -137,6 +141,8 @@ class ServerThread extends Thread {
 
     public void update_rooms() {
         send_message("ROOMS<|>" + roomManager.getRoomList(activeMsgHandler));
+        send_message("PRIVATEROOMS<|>" + roomManager.getPrivateRoomList(activeMsgHandler, this));
+        send_message("PRITARGETS<|>" + roomManager.getPossiblePrivateChatTargets(this.account));
     }
 
     private boolean process_message(String message) throws IOException {
@@ -155,6 +161,34 @@ class ServerThread extends Thread {
             greeting();
             update_rooms();
             roomManager.serverfrontend.update_connected();
+            return true;
+        }
+        else if (message.split("<\\|>")[0].equals("SWITCHPRIROOM")) {
+            String partner = message.split("<\\|>")[1];
+            MessageHandler newroom = roomManager.get_private_room_by_names(this.account.name, partner);
+            activeMsgHandler.deregister_client(this);
+            activeMsgHandler = newroom;
+            newroom.register_client(this);
+            greeting();
+            update_rooms();
+            roomManager.serverfrontend.update_connected();
+            return true;
+        }
+        else if (message.split("<\\|>")[0].equals("CREATEPRI")) {
+            String partner = message.split("<\\|>")[1];
+            MessageHandler newroom = roomManager.newPrivateRoom(this.account, roomManager.find_account_by_name(partner));
+            activeMsgHandler.deregister_client(this);
+            activeMsgHandler = newroom;
+            newroom.register_client(this);
+            greeting();
+            update_rooms();
+            roomManager.serverfrontend.update_connected();
+            return true;
+        }
+        else if (message.split("<\\|>")[0].equals("DELETEPRI")) {
+            String partner = message.split("<\\|>")[1];
+            PrivateMessageHandler pm = roomManager.find_private_room_by_participants(this.account.name, partner);
+            roomManager.deletePrivateRoom(pm);
             return true;
         }
         return false;

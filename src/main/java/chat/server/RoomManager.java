@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 public class RoomManager {
     LinkedList<MessageHandler> rooms;
+    LinkedList<PrivateMessageHandler> private_rooms;
     LinkedList<Account> registered_users;
     LinkedList<ServerThread> connected_clients;
     Logger logger;
@@ -16,13 +17,23 @@ public class RoomManager {
     public RoomManager() {
         this.logger = Logger.getLogger("mainLogger");
         this.rooms = new LinkedList<>();
+        this.private_rooms = new LinkedList<>();
         this.connected_clients = new LinkedList<>();
         this.registered_users = loadAccounts();
     }
 
-    public void newRoom(String name) {
-        rooms.add(new MessageHandler(name, this.serverfrontend, this));
+    public MessageHandler newRoom(String name) {
+        MessageHandler ms = new MessageHandler(name, this.serverfrontend, this);
+        rooms.add(ms);
         logger.info("Created new room: " + name);
+        return ms;
+    }
+
+    public PrivateMessageHandler newPrivateRoom(Account p1, Account p2) {
+        PrivateMessageHandler pmh = new PrivateMessageHandler(this.serverfrontend, this, p1, p2);
+        private_rooms.add(pmh);
+        logger.info("Created new private room: " + p1.name + "&" + p2.name);
+        return pmh;
     }
 
     public void deleteRoom(String name) {
@@ -33,6 +44,7 @@ public class RoomManager {
         }
         for (ServerThread cli : del.client_threads) {
             del.deregister_client(cli);
+            cli.send_message("CLEAR");
             rooms.get(moveindex).register_client(cli);
             cli.activeMsgHandler = rooms.get(moveindex);
             cli.update_rooms();
@@ -72,11 +84,26 @@ public class RoomManager {
         return null;
     }
 
-    public void register_account(Account account) {
+    public PrivateMessageHandler get_private_room_by_names(String nameA, String nameB) {
+        Account p1 = find_account_by_name(nameA);
+        Account p2 = find_account_by_name(nameB);
+        for (PrivateMessageHandler pm : private_rooms) {
+            if (pm.is_participant(p1) && pm.is_participant(p2)) {
+                return pm;
+            }
+        }
+        return null;
+    }
+
+    public boolean register_account(Account account) {
+        if (this.find_account_by_name(account.name) != null) {
+            return false;
+        }
         this.registered_users.add(account);
         serverfrontend.update_registered();
         saveAccounts();
         logger.info("Registered user: " + account.name);
+        return true;
     }
     public void delete_account(Account account) {
         this.registered_users.remove(account);
@@ -162,7 +189,9 @@ public class RoomManager {
         for (ServerThread cli : connected_clients) {
             cli.update_rooms();
         }
-        serverfrontend.update_rooms();
+        if (serverfrontend != null) {
+            serverfrontend.update_rooms();
+        }
     }
 
     public void renameRoom(String oldname, String newname) {
@@ -177,5 +206,88 @@ public class RoomManager {
             }
         }
         return null;
+    }
+
+    public Account find_account_by_name(String name) {
+        for (Account acc : this.registered_users) {
+            if (acc.name.equals(name)) {
+                return acc;
+            }
+        }
+        return null;
+    }
+
+    public String getPrivateRoomList(MessageHandler active, ServerThread cli) {
+        StringBuilder lst = new StringBuilder();
+        for (PrivateMessageHandler room : this.private_rooms) {
+            if (!(room.is_participant(cli.account))) {
+                continue;
+            }
+            lst.append(room.get_partner_name(cli.account));
+            if (room == active) {
+                lst.append("/!!/");
+            }
+            lst.append("|");
+        }
+        String f = lst.toString();
+        if (f.length() > 0) {
+            return f.substring(0, f.length() - 1);
+        }
+        else {
+            return "";
+        }
+    }
+
+    public String getPossiblePrivateChatTargets(Account requestingAccount) {
+        StringBuilder returnstring = new StringBuilder();
+        for (Account acc : registered_users) {
+            if (acc == requestingAccount) {
+                continue;
+            }
+            boolean possible = true;
+            for (PrivateMessageHandler pm : private_rooms) {
+                if (pm.is_participant(acc) && pm.is_participant(requestingAccount)) {
+                    possible = false;
+                    break;
+                }
+            }
+            if (possible) {
+                returnstring.append(acc.name).append("|");
+            }
+        }
+        if (returnstring.length() < 1) {
+            return "";
+        }
+        String f = returnstring.toString();
+        if (f.length() < 1) {
+            return "";
+        }
+        return f.substring(0, f.length() - 1);
+    }
+
+    public PrivateMessageHandler find_private_room_by_participants(String p1_name, String p2_name) {
+        return find_private_room_by_participants(find_account_by_name(p1_name), find_account_by_name(p2_name));
+    }
+
+    public PrivateMessageHandler find_private_room_by_participants(Account p1, Account p2) {
+        for (PrivateMessageHandler pm : private_rooms) {
+            if (pm.is_participant(p1) && pm.is_participant(p2)) {
+                return pm;
+            }
+        }
+        return null;
+    }
+
+    public void deletePrivateRoom(PrivateMessageHandler target) {
+        for (ServerThread cli : target.client_threads) {
+            target.deregister_client(cli);
+            cli.send_message("CLEAR");
+            cli.activeMsgHandler = rooms.get(0);
+            rooms.get(0).register_client(cli);
+            cli.update_rooms();
+        }
+        private_rooms.remove(target);
+        update_client_room_list();
+        serverfrontend.update_connected();
     }
 }
