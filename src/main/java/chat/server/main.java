@@ -82,9 +82,9 @@ public class main {
     }
 
     public static void stop_server() {
-        roomManager.getRooms().get(0).push_message(null, "SERVER<|>Server wurde runtergefahren");
         Logger logger = Logger.getLogger("mainLogger");
-        for (ServerThread client : roomManager.getRooms().get(0).getClientThreads()) {
+        for (ServerThread client : roomManager.connected_clients) {
+            client.send_message("SERVER<|>Server wurde runtergefahren");
             client.disconnect();
         }
         try {
