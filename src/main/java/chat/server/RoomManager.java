@@ -44,6 +44,7 @@ public class RoomManager {
         }
         for (ServerThread cli : del.client_threads) {
             del.deregister_client(cli);
+            cli.send_message("CLEAR");
             rooms.get(moveindex).register_client(cli);
             cli.activeMsgHandler = rooms.get(moveindex);
             cli.update_rooms();
@@ -258,6 +259,35 @@ public class RoomManager {
             return "";
         }
         String f = returnstring.toString();
+        if (f.length() < 1) {
+            return "";
+        }
         return f.substring(0, f.length() - 1);
+    }
+
+    public PrivateMessageHandler find_private_room_by_participants(String p1_name, String p2_name) {
+        return find_private_room_by_participants(find_account_by_name(p1_name), find_account_by_name(p2_name));
+    }
+
+    public PrivateMessageHandler find_private_room_by_participants(Account p1, Account p2) {
+        for (PrivateMessageHandler pm : private_rooms) {
+            if (pm.is_participant(p1) && pm.is_participant(p2)) {
+                return pm;
+            }
+        }
+        return null;
+    }
+
+    public void deletePrivateRoom(PrivateMessageHandler target) {
+        for (ServerThread cli : target.client_threads) {
+            target.deregister_client(cli);
+            cli.send_message("CLEAR");
+            cli.activeMsgHandler = rooms.get(0);
+            rooms.get(0).register_client(cli);
+            cli.update_rooms();
+        }
+        private_rooms.remove(target);
+        update_client_room_list();
+        serverfrontend.update_connected();
     }
 }

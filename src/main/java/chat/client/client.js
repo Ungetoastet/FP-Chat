@@ -43,8 +43,9 @@ function update_private_rooms(roominfo) {
         return;
     }
 
-    let newhtml = "";
+    roomlist.innerHTML = "";
     for (const i in rooms) {
+        let newhtml = "";
         const roomname = rooms[i].split("/!!/")[0].split("@")[0];
         newhtml += '<button class="roomcard" ';
         if (rooms[i].includes("/!!/")) {
@@ -55,8 +56,13 @@ function update_private_rooms(roominfo) {
         newhtml += '\')">';
         newhtml += roomname;
         newhtml += '</button>'
+        newhtml += '<button class="secondary" style="color:red" onclick="delete_private_room(\'';
+        newhtml += roomname;
+        newhtml += '\')">Delete</button>';
+        let newdiv = document.createElement("div");
+        newdiv.innerHTML = newhtml;
+        roomlist.appendChild(newdiv)
     }
-    roomlist.innerHTML = newhtml;
 }
 
 function update_private_targets(status) {
@@ -77,7 +83,13 @@ function create_private_room() {
     if (targetselect.value == undefined || targetselect.value == "") {
         return;
     }
+    const message_window = document.getElementById("window-chat");
+    message_window.innerHTML = "";
     send("CREATEPRI<|>" + targetselect.value);
+}
+
+function delete_private_room(targetname) {
+    send("DELETEPRI<|>" + targetname);
 }
 
 function processmsg(msg) {
@@ -99,6 +111,11 @@ function processmsg(msg) {
     }
     else if (sender == "PRITARGETS") {
         update_private_targets(status);
+        return;
+    }
+    else if (sender == "CLEAR") {
+        const msg_window = document.getElementById("window-chat");
+        msg_window.innerHTML = "";
         return;
     }
     else if (sender == "LOGIN") {

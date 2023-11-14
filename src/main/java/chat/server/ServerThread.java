@@ -185,6 +185,12 @@ class ServerThread extends Thread {
             roomManager.serverfrontend.update_connected();
             return true;
         }
+        else if (message.split("<\\|>")[0].equals("DELETEPRI")) {
+            String partner = message.split("<\\|>")[1];
+            PrivateMessageHandler pm = roomManager.find_private_room_by_participants(this.account.name, partner);
+            roomManager.deletePrivateRoom(pm);
+            return true;
+        }
         return false;
     }
 
