@@ -34,6 +34,52 @@ socket.addEventListener("message", (event) => {
     }
 });
 
+function update_private_rooms(roominfo) {
+    const rooms = roominfo.split("|");
+    const roomlist = document.getElementById("privatelist");
+
+    if (roominfo == "") {
+        roomlist.innerHTML = "<i>Keine offenen privaten chats</i>";
+        return;
+    }
+
+    let newhtml = "";
+    for (const i in rooms) {
+        const roomname = rooms[i].split("/!!/")[0].split("@")[0];
+        newhtml += '<button class="roomcard" ';
+        if (rooms[i].includes("/!!/")) {
+            newhtml += 'id="activeroom" ';
+        }
+        newhtml += 'onclick="switch_to_private_room(\'';
+        newhtml += roomname;
+        newhtml += '\')">';
+        newhtml += roomname;
+        newhtml += '</button>'
+    }
+    roomlist.innerHTML = newhtml;
+}
+
+function update_private_targets(status) {
+    const targetselect = document.getElementById("messageTarget");
+    targetselect.innerHTML = "";
+    let targets = status.split("|");
+
+    for (const i in targets) {
+        let newoption = document.createElement("option");
+        newoption.value = targets[i];
+        newoption.innerHTML = targets[i];
+        targetselect.appendChild(newoption);
+    }
+}
+
+function create_private_room() {
+    const targetselect = document.getElementById("messageTarget");
+    if (targetselect.value == undefined || targetselect.value == "") {
+        return;
+    }
+    send("CREATEPRI<|>" + targetselect.value);
+}
+
 function processmsg(msg) {
     const message_window = document.getElementById("window-chat");
     let sender = msg.split("<|>")[0];
@@ -45,6 +91,14 @@ function processmsg(msg) {
     }
     else if (sender == "CONNECTED") {
         update_connected(status);
+        return;
+    }
+    else if (sender == "PRIVATEROOMS") {
+        update_private_rooms(status);
+        return;
+    }
+    else if (sender == "PRITARGETS") {
+        update_private_targets(status);
         return;
     }
     else if (sender == "LOGIN") {
@@ -229,7 +283,7 @@ function hide_login_window() {
 function update_rooms(roominfo) {
     const rooms = roominfo.split("|");
     const roomlist = document.getElementById("publics-container");
-    let newhtml = "<i>Öffentliche Räume</i>";
+    let newhtml = "";
     for (const i in rooms) {
         const roomname = rooms[i].split("/!!/")[0].split("@")[1];
         const roompop = rooms[i].split("/!!/")[0].split("@")[0];
@@ -251,6 +305,13 @@ function switch_to_room(room_name) {
     const message_window = document.getElementById("window-chat");
     message_window.innerHTML = "";
     send("SWITCHROOM<|>" + room_name);
+}
+
+function switch_to_private_room(room_name) {
+    console.log("Switching to private room " + room_name);
+    const message_window = document.getElementById("window-chat");
+    message_window.innerHTML = "";
+    send("SWITCHPRIROOM<|>" + room_name);
 }
 
 function update_connected(connectedinfo) {

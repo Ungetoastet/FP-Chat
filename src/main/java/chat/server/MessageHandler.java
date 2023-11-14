@@ -1,6 +1,5 @@
 package chat.server;
 
-import java.io.*;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 

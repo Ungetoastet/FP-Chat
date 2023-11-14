@@ -52,7 +52,12 @@ public class main {
             roomManager.register_frontend(frontendThread);
             roomManager.newRoom("Hauptchat");
             roomManager.newRoom("Nebenchat");
-            roomManager.newRoom("Kacke");
+            roomManager.newRoom("Dritter Chat");
+            roomManager.newPrivateRoom(
+                    roomManager.find_account_by_name("robert"),
+                    roomManager.find_account_by_name("lucie")
+            );
+
             frontendThread.start();
             logger.info("Server frontend connected");
 

@@ -141,6 +141,8 @@ class ServerThread extends Thread {
 
     public void update_rooms() {
         send_message("ROOMS<|>" + roomManager.getRoomList(activeMsgHandler));
+        send_message("PRIVATEROOMS<|>" + roomManager.getPrivateRoomList(activeMsgHandler, this));
+        send_message("PRITARGETS<|>" + roomManager.getPossiblePrivateChatTargets(this.account));
     }
 
     private boolean process_message(String message) throws IOException {
@@ -153,6 +155,28 @@ class ServerThread extends Thread {
         if (message.split("<\\|>")[0].equals("SWITCHROOM")) {
             String roomname = message.split("<\\|>")[1];
             MessageHandler newroom = roomManager.get_room_by_name(roomname);
+            activeMsgHandler.deregister_client(this);
+            activeMsgHandler = newroom;
+            newroom.register_client(this);
+            greeting();
+            update_rooms();
+            roomManager.serverfrontend.update_connected();
+            return true;
+        }
+        else if (message.split("<\\|>")[0].equals("SWITCHPRIROOM")) {
+            String partner = message.split("<\\|>")[1];
+            MessageHandler newroom = roomManager.get_private_room_by_names(this.account.name, partner);
+            activeMsgHandler.deregister_client(this);
+            activeMsgHandler = newroom;
+            newroom.register_client(this);
+            greeting();
+            update_rooms();
+            roomManager.serverfrontend.update_connected();
+            return true;
+        }
+        else if (message.split("<\\|>")[0].equals("CREATEPRI")) {
+            String partner = message.split("<\\|>")[1];
+            MessageHandler newroom = roomManager.newPrivateRoom(this.account, roomManager.find_account_by_name(partner));
             activeMsgHandler.deregister_client(this);
             activeMsgHandler = newroom;
             newroom.register_client(this);

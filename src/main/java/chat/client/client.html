@@ -23,6 +23,7 @@
                 </div>
             </div>
             <div id="room-container">
+                <i>Räume und Chats</i>
                 <div class="tab">
                     <button class="tablinks active" onclick="switchtab(event, 'publics-container')">Öffentlich</button>
                     <button class="tablinks" onclick="switchtab(event, 'privates-container')">Privat</button>
@@ -33,6 +34,15 @@
                     <button class="roomcard"><i>[3]</i> Room C</button>
                 </div>
                 <div id="privates-container" class="tabcontent">
+                    <div style="display: flex; margin-bottom: 10px">
+                        <select id="messageTarget" style="flex: 1">
+                            <option>USER C</option>
+                            <option>USER D</option>
+                            <option>USER E</option>
+                            <option>USER F</option>
+                        </select>
+                        <button class="secondary" style="flex: 1" onclick="create_private_room()">Chatten</button>
+                    </div>
                     <div id="privatelist">
                         <button class="roomcard"> Privatchat A  </button>
                         <button class="roomcard"> Privatchat B  </button>

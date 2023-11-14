@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 public class RoomManager {
     LinkedList<MessageHandler> rooms;
+    LinkedList<PrivateMessageHandler> private_rooms;
     LinkedList<Account> registered_users;
     LinkedList<ServerThread> connected_clients;
     Logger logger;
@@ -16,13 +17,23 @@ public class RoomManager {
     public RoomManager() {
         this.logger = Logger.getLogger("mainLogger");
         this.rooms = new LinkedList<>();
+        this.private_rooms = new LinkedList<>();
         this.connected_clients = new LinkedList<>();
         this.registered_users = loadAccounts();
     }
 
-    public void newRoom(String name) {
-        rooms.add(new MessageHandler(name, this.serverfrontend, this));
+    public MessageHandler newRoom(String name) {
+        MessageHandler ms = new MessageHandler(name, this.serverfrontend, this);
+        rooms.add(ms);
         logger.info("Created new room: " + name);
+        return ms;
+    }
+
+    public PrivateMessageHandler newPrivateRoom(Account p1, Account p2) {
+        PrivateMessageHandler pmh = new PrivateMessageHandler(this.serverfrontend, this, p1, p2);
+        private_rooms.add(pmh);
+        logger.info("Created new private room: " + p1.name + "&" + p2.name);
+        return pmh;
     }
 
     public void deleteRoom(String name) {
@@ -67,6 +78,17 @@ public class RoomManager {
         for (MessageHandler room : this.rooms) {
             if (room.getRoomName().equals(name)) {
                 return room;
+            }
+        }
+        return null;
+    }
+
+    public PrivateMessageHandler get_private_room_by_names(String nameA, String nameB) {
+        Account p1 = find_account_by_name(nameA);
+        Account p2 = find_account_by_name(nameB);
+        for (PrivateMessageHandler pm : private_rooms) {
+            if (pm.is_participant(p1) && pm.is_participant(p2)) {
+                return pm;
             }
         }
         return null;
@@ -192,5 +214,50 @@ public class RoomManager {
             }
         }
         return null;
+    }
+
+    public String getPrivateRoomList(MessageHandler active, ServerThread cli) {
+        StringBuilder lst = new StringBuilder();
+        for (PrivateMessageHandler room : this.private_rooms) {
+            if (!(room.is_participant(cli.account))) {
+                continue;
+            }
+            lst.append(room.get_partner_name(cli.account));
+            if (room == active) {
+                lst.append("/!!/");
+            }
+            lst.append("|");
+        }
+        String f = lst.toString();
+        if (f.length() > 0) {
+            return f.substring(0, f.length() - 1);
+        }
+        else {
+            return "";
+        }
+    }
+
+    public String getPossiblePrivateChatTargets(Account requestingAccount) {
+        StringBuilder returnstring = new StringBuilder();
+        for (Account acc : registered_users) {
+            if (acc == requestingAccount) {
+                continue;
+            }
+            boolean possible = true;
+            for (PrivateMessageHandler pm : private_rooms) {
+                if (pm.is_participant(acc) && pm.is_participant(requestingAccount)) {
+                    possible = false;
+                    break;
+                }
+            }
+            if (possible) {
+                returnstring.append(acc.name).append("|");
+            }
+        }
+        if (returnstring.length() < 1) {
+            return "";
+        }
+        String f = returnstring.toString();
+        return f.substring(0, f.length() - 1);
     }
 }

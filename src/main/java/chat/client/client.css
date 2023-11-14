@@ -90,6 +90,12 @@ input, select {
     font-weight: bold;
     padding: 10px 20px;
 }
+select {
+    cursor: pointer;
+}
+input {
+    cursor: text;
+}
 
 input#composer {
     width: 100%;
@@ -298,4 +304,6 @@ img, object{
     border-top: none;
     border-radius: 0 0 5px 5px / 0 0 5px 5px;
     animation: ease-in-out 0.2s fade-in;
+    overflow-y: scroll;
+    max-height: 70%;
 }
