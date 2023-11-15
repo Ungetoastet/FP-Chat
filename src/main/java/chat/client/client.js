@@ -285,7 +285,7 @@ function register() {
         alert("'|', '/!!/', '@' und ',' sind nicht im name oder im Passwort erlaubt.");
         return;
     }
-    if(name.value == "SERVER" || name.value == "LOGIN" || name.value == "REGISTER" || name.value == "COMMAND"){
+    if(name.value == "SERVER" || name.value == "LOGIN" || name.value == "REGISTER" || name.value == "CONTROL"){
         alert("Name ist reserviert und kann nicht verwendet werden.")
         return;
     }

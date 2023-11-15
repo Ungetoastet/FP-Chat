@@ -12,13 +12,13 @@ class ServerManager extends Thread {
 
     String helpString = "\nServer terminal help: \n"
             + "EXIT                        Stops the server \n"
-            + "KICK <name>                 Kicks the user\n"
-            + "BAN <name>                  Bans the user and kicks them\n"
-            + "UNBAN <name>                Unbans the user \n"
-            + "REGISTER <name> <password>  Registers a new user \n"
-            + "RENAME <name> <new_name>    Changes the name of a user\n"
-            + "SETPASS <name> <new_pwd>    Changes the password of a user\n"
-            + "SAY <text>                  Sends a message to all clients\n"
+            + "KICK|<name>                 Kicks the user\n"
+            + "BAN|<name>                  Bans the user and kicks them\n"
+            + "UNBAN|<name>                Unbans the user \n"
+            + "REGISTER|<name>|<password>  Registers a new user \n"
+            + "RENAME|<name>|<new_name>    Changes the name of a user\n"
+            + "SETPASS|<name>|<new_pwd>    Changes the password of a user\n"
+            + "SAY|<text>                  Sends a message to all clients\n"
             + "HELP                        Show this page\n";
 
     ServerManager(RoomManager rm) {
@@ -42,8 +42,8 @@ class ServerManager extends Thread {
     }
 
     public void process_command(String input) {
-        String cmd = input.split(" ")[0].toUpperCase();
-        String[] args = input.split(" ", 2);
+        String[] args = input.split("\\|");
+        String cmd = args[0].toUpperCase();
         switch (cmd) {
             case "":
                 break;
@@ -59,14 +59,12 @@ class ServerManager extends Thread {
                 break;
 
             case "REGISTER":
-                args = input.split(" ", 3);
                 roomManager.registered_users.add(
                         new Account(args[1], args[2]));
                 frontendThread.update_registered();
                 break;
 
             case "BAN":
-                args = input.split(" ", 2);
                 if (!banUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
@@ -75,7 +73,6 @@ class ServerManager extends Thread {
                 break;
 
             case "KICK":
-                args = input.split(" ", 2);
                 if (!kickUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
@@ -83,7 +80,6 @@ class ServerManager extends Thread {
                 break;
 
             case "UNBAN":
-                args = input.split(" ", 2);
                 if (!unbanUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }
@@ -91,7 +87,6 @@ class ServerManager extends Thread {
                 break;
 
             case "DELETE":
-                args = input.split(" ", 2);
                 if (!deleteUser(args[1])) {
                     System.out.println("[SERVER] >> No user with name " + args[1] + " found.");
                 }

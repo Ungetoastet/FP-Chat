@@ -148,15 +148,15 @@ function update_registered(data) {
 }
 
 function banUser(name) {
-    send("CONTROL<|>BAN " + name);
+    send("CONTROL<|>BAN|" + name);
 }
 
 function deleteUser(name) {
-    send("CONTROL<|>DELETE " + name);
+    send("CONTROL<|>DELETE|" + name);
 }
 
 function unbanUser(name) {
-    send("CONTROL<|>UNBAN " + name);
+    send("CONTROL<|>UNBAN|" + name);
 }
 
 function update_connected(data) {
@@ -193,7 +193,7 @@ function update_connected(data) {
 }
 
 function kickUser(name) {
-    send("CONTROL<|>KICK " + name);
+    send("CONTROL<|>KICK|" + name);
     console.log("KICKED");
 }
 
@@ -233,16 +233,16 @@ function update_rooms(data) {
 
 function createroom() {
     const nameinput = document.getElementById("newroomname");
-    send("CONTROL<|>CREATEROOM " + nameinput.value);
+    send("CONTROL<|>CREATEROOM|" + nameinput.value);
     nameinput.value = "";
 }
 
 function deleteroom(roomname) {
-    send("CONTROL<|>DELETEROOM " + roomname);
+    send("CONTROL<|>DELETEROOM|" + roomname);
 }
 
 function renameroom(oldname, newname) {
-    send("CONTROL<|>RENAMEROOM " + oldname + " " + newname);
+    send("CONTROL<|>RENAMEROOM|" + oldname + "|" + newname);
 }
 
 function send(data) {
