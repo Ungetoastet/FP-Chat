@@ -74,7 +74,6 @@ class FrontendThread extends Thread{
         } catch (SocketException e) {
             try {
                 websocket.socket.close();
-                roomManager.deregister_frontend();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -91,7 +90,6 @@ class FrontendThread extends Thread{
         catch (SocketException e) {
             try {
                 websocket.socket.close();
-                roomManager.deregister_frontend();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

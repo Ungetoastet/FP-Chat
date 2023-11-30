@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 class MessageHandler extends Thread {
-    FrontendThread serverfrontend;
     LinkedList<ServerThread> client_threads;
     LinkedList<String> message_history;
     String room_name;
@@ -12,12 +11,11 @@ class MessageHandler extends Thread {
     RoomManager roomManager;
     int userCount;
 
-    MessageHandler(String name, FrontendThread sf, RoomManager rm) {
+    MessageHandler(String name, RoomManager rm) {
         this.logger = Logger.getLogger("mainLogger");
         this.client_threads = new LinkedList<>();
         this.message_history = new LinkedList<>();
         this.room_name = name;
-        this.serverfrontend = sf;
         this.roomManager = rm;
         this.userCount = 0;
     }
@@ -48,9 +46,6 @@ class MessageHandler extends Thread {
     }
 
     public void push_message(ServerThread sender, String message) {
-        if (serverfrontend != null) {
-            serverfrontend.send_message(room_name + "<|>" + message);
-        }
         if (client_threads.size() == 0) {
             logger.info("Tried to push message, but no clients are connected.");
             return;

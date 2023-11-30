@@ -10,7 +10,6 @@ public class RoomManager {
     LinkedList<Account> registered_users;
     LinkedList<ServerThread> connected_clients;
     Logger logger;
-    FrontendThread serverfrontend;
 
     private final String accounts_filename = "registered_accounts.acc";
 
@@ -23,14 +22,14 @@ public class RoomManager {
     }
 
     public MessageHandler newRoom(String name) {
-        MessageHandler ms = new MessageHandler(name, this.serverfrontend, this);
+        MessageHandler ms = new MessageHandler(name, this);
         rooms.add(ms);
         logger.info("Created new room: " + name);
         return ms;
     }
 
     public PrivateMessageHandler newPrivateRoom(Account p1, Account p2) {
-        PrivateMessageHandler pmh = new PrivateMessageHandler(this.serverfrontend, this, p1, p2);
+        PrivateMessageHandler pmh = new PrivateMessageHandler(this, p1, p2);
         private_rooms.add(pmh);
         logger.info("Created new private room: " + p1.name + "&" + p2.name);
         return pmh;
@@ -100,7 +99,6 @@ public class RoomManager {
             return false;
         }
         this.registered_users.add(account);
-        serverfrontend.update_registered();
         saveAccounts();
         logger.info("Registered user: " + account.name);
         return true;
@@ -152,14 +150,6 @@ public class RoomManager {
         }
     }
 
-    public void register_frontend(FrontendThread newsfe) {
-        this.serverfrontend = newsfe;
-    }
-
-    public void deregister_frontend() {
-        this.serverfrontend = null;
-    }
-
     public void register_client(ServerThread cli) {
         this.connected_clients.add(cli);
         update_client_room_list();
@@ -188,9 +178,6 @@ public class RoomManager {
     public void update_client_room_list() {
         for (ServerThread cli : connected_clients) {
             cli.update_rooms();
-        }
-        if (serverfrontend != null) {
-            serverfrontend.update_rooms();
         }
     }
 
@@ -288,6 +275,5 @@ public class RoomManager {
         }
         private_rooms.remove(target);
         update_client_room_list();
-        serverfrontend.update_connected();
     }
 }

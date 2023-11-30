@@ -31,35 +31,14 @@ public class main {
             logger.info("Server running on " + server.getInetAddress() + ":" + server.getLocalPort());
             boolean accept_new_connections = true;
 
-            // Automatically open the frontend
-            try {
-                String absolut_project_path = System.getProperty("user.dir").replaceAll("\\\\", "/");
-                String relative_path = "/src/main/java/chat/server/frontend/server.html";
-                java.awt.Desktop.getDesktop().browse(new java.net.URI(absolut_project_path+relative_path));
-                logger.info("Opened server frontend");
-            } catch (IOException | URISyntaxException e) {
-                System.out.println("Error in server frontend - startup:\n");
-                logger.severe("Error opening server frontend!");
-                e.printStackTrace();
-            }
             // Create server manager
             ServerManager manager = new ServerManager(roomManager);
 
-            // Start server manager frontend server and wait for connection
-            ServerSocket frontendServer = new ServerSocket(1871);
-            FrontendThread frontendThread = new FrontendThread(new Websocket(frontendServer.accept()), roomManager, manager);
-
-            roomManager.register_frontend(frontendThread);
             roomManager.newRoom("Hauptchat");
-            roomManager.newRoom("Nebenchat");
-            roomManager.newRoom("Dritter Chat");
-            roomManager.newPrivateRoom(
-                    roomManager.find_account_by_name("robert"),
-                    roomManager.find_account_by_name("lucie")
-            );
-
-            frontendThread.start();
-            logger.info("Server frontend connected");
+            roomManager.newRoom("Witziges Zeug");
+            roomManager.newRoom("Ernstes Zeug");
+            roomManager.newRoom("Tiere");
+            roomManager.newRoom("Informatik");
 
             // Start server manager
             logger.info("Started server manager");

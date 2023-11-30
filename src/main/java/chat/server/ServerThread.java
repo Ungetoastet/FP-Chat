@@ -69,8 +69,6 @@ class ServerThread extends Thread {
             send_message("LOGIN<|>SUCCESS");
             activeMsgHandler.register_client(this);
 
-            activeMsgHandler.serverfrontend.update_connected();
-
             update_rooms();
             greeting();
 
@@ -148,7 +146,6 @@ class ServerThread extends Thread {
     private boolean process_message(String message) throws IOException {
         if (message.equals("CLOSE")) {
             activeMsgHandler.deregister_client(this);
-            activeMsgHandler.serverfrontend.update_connected();
             client.socket.close();
             return true;
         }
@@ -160,7 +157,6 @@ class ServerThread extends Thread {
             newroom.register_client(this);
             greeting();
             update_rooms();
-            roomManager.serverfrontend.update_connected();
             return true;
         }
         else if (message.split("<\\|>")[0].equals("SWITCHPRIROOM")) {
@@ -171,7 +167,6 @@ class ServerThread extends Thread {
             newroom.register_client(this);
             greeting();
             update_rooms();
-            roomManager.serverfrontend.update_connected();
             return true;
         }
         else if (message.split("<\\|>")[0].equals("CREATEPRI")) {
@@ -182,7 +177,6 @@ class ServerThread extends Thread {
             newroom.register_client(this);
             greeting();
             update_rooms();
-            roomManager.serverfrontend.update_connected();
             return true;
         }
         else if (message.split("<\\|>")[0].equals("DELETEPRI")) {
