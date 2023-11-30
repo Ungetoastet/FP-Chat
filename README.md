@@ -16,6 +16,8 @@ Keine :)
 ## Nice to have
 - Zeitstempel für Nachrichten (muss serverseitig gestempelt werden)
 - Togglebarer Darkmode für Client
+- Cookies für Anmeldedaten im Client
+- Mobile Optimisation
 - ✅ Laden des Chatverlaufs beim Betreten eines Raums
 - ✅ Nachrichtenanimationen
 
