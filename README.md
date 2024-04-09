@@ -1,26 +1,20 @@
 # FP-Chat
 Fortgeschrittenes Programmierpraktikum WS23/24: Chatprogramm
 
-2 Idioten vollgepumpt mit Koffein, die in einer Nacht nen Chatroom programmieren.
-Einer kann was, die andere malt.
+Client-Server Chat System.
+Client in JavaScript, HTML und CSS, ohne Framework.
+Server in Java.
 
 # Features
-- Multithreaded server
-- JavaScript/HTML Web Client
-- Login / Registration for users
+- Öffentliche und private Chaträume
+- Nutzer Login und Registrierung 
+- Kommunikation über Websocket Protokoll
+- Senden und empfangen von Bildern und PDFs
+- Nicht Limitierte Nachrichtengröße dank eigener Websocket-Erweiterung
+- Animierte Chat Bubbles
+- Speichern und Laden des Chatverlaufs
 
 # ToDo
-## Known issues
-Keine :)
-
-## Nice to have
-- Zeitstempel für Nachrichten (muss serverseitig gestempelt werden)
-- Togglebarer Darkmode für Client
-- Cookies für Anmeldedaten im Client
-- Mobile Optimisation
-- ✅ Laden des Chatverlaufs beim Betreten eines Raums
-- ✅ Nachrichtenanimationen
-
 ## Meilenstein 1
 ### Server
 - ✅ starten und beenden des ServerSockets
@@ -79,9 +73,3 @@ Keine :)
 - ✅ Eröffnen eines privaten Raumes
 - ✅ Senden von Nachrichten von einem Client zum anderen Client
 - ✅ Schließen eines privaten Raumes
-
-
-## Andere Ideen
-- Passwort Transfer mit MD5
-- Ende zu Ende Verschlüsselung in privaten Räumen
-...
