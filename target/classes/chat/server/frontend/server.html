@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Server Manager</title>
+    <link rel="stylesheet" href="../../client/client.css">
+    <link rel="stylesheet" href="server.css">
+</head>
+<body>
+    <h1>Chat Server Manager</h1>
+    Server Management Client
+    <div id="main-container">
+        <div id="chat">
+            <div id="window-chat"></div>
+            <div id="window-type">
+                <select id="messageTarget">
+                </select>
+                <input type="text" id="composer" placeholder="Hier tippen...">
+                <button class="main" id="send" onclick="send_message()">SEND</button>
+            </div>
+        </div>
+        <div class="window" id="rooms">
+            <i>Rooms</i><br>
+            <input id="newroomname" placeholder="New room...">
+            <button class="secondary" onclick="createroom()">Create</button><br><br>
+            <div class="namelist" id="roomList">
+            </div>
+        </div>
+        <div class="window" id="registered">
+            <i>Registered Accounts</i>
+            <div class="namelist" id="registeredList">
+            </div>
+        </div>
+        <div class="window" id="connected">
+            <i>Connected clients </i>
+            <div class="namelist" id="connectedList">
+            </div>
+        </div>
+        <div class="window" id="management">
+            <i>Server management</i>
+            <button class="main" style="width: 100%" onclick="stop_server()">Stop server</button>
+        </div>
+    </div>
+</body>
+<script src="server.js" charset="UTF-8"></script>
+</html>
